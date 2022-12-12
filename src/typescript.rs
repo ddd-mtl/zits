@@ -14,7 +14,7 @@ impl From<String> for TsType {
 }
 
 fn convert_generic(gen_ty: &syn::GenericArgument) -> TsType {
-    println!("convert_generic(): {:?}", gen_ty);
+    //println!("convert_generic(): {:?}", gen_ty);
     match gen_ty {
         syn::GenericArgument::Type(ty) => convert_type(ty),
         _ => "unknown".to_string().into(),
@@ -96,7 +96,8 @@ pub fn convert_type(ty: &syn::Type) -> TsType {
                         format!("{:?}", parenthesized_argument)
                     }
                     syn::PathArguments::AngleBracketed(anglebracketed_argument) => format!(
-                        "Array<{}>",
+                        //"Array<{}>",
+                        "{}[]",
                         match convert_generic(anglebracketed_argument.args.first().unwrap()) {
                             TsType{ is_optional: true, ts_type } => format!("{} | undefined", ts_type),
                             TsType{ is_optional: false, ts_type } => ts_type

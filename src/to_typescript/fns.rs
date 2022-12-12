@@ -3,6 +3,17 @@ use syn::{FnArg, Pat, ReturnType};
 use crate::typescript::convert_type;
 use crate::{utils, ParseState, write_comments};
 
+
+const HOLOCHAIN_CALLBACKS: [&str; 10] = [
+   "init", "entry_defs", "genesis_self_check",
+   "post_commit", "recv_remote_signal",
+   "validate",  "validate_create_link", "validate_delete_link",
+   "migrate_agent_open", "migrate_agent_close",
+];
+
+
+
+
 ///
 impl super::ToTypescript for syn::ItemFn {
 
@@ -14,8 +25,15 @@ impl super::ToTypescript for syn::ItemFn {
 
       let fn_name = self.sig.ident.to_string();
 
+
+      /// Skip Holochain callbacks
+      if HOLOCHAIN_CALLBACKS.contains(&fn_name.as_str()) {
+         println!("Skipping callback '{}()'", fn_name);
+         return;
+      }
+
       let ReturnType::Type(_arrow, out_type) = self.sig.output else {
-         eprintln!("Falied to retrieve function return type");
+         eprintln!("Failed to determine return type for function '{}()'", fn_name);
          return;
       };
       let out_name = convert_type(&out_type).ts_type;
@@ -24,23 +42,30 @@ impl super::ToTypescript for syn::ItemFn {
       let first_arg = self.sig.inputs.first().unwrap();
       //println!("first_arg = {:?}", first_arg);
       let FnArg::Typed(patty) = first_arg else {
-         eprintln!("Falied to retrieve function first arg type");
+         eprintln!("Failed to determine first argument type for function '{}()'", fn_name);
          return;
       };
-      let Pat::Ident(pat_ident) = *patty.clone().pat else {
-         eprintln!("Falied to retrieve function first arg name");
-         return;
+      //println!("\n\npatty.{} = {:?}", fn_name, patty);
+      let arg_name = match *patty.clone().pat {
+         Pat::Ident(pat_ident) => pat_ident.ident.to_string(),
+         Pat::Struct(_) => "input".to_string(),
+         _ => "null".to_string()
       };
-      let arg_name = pat_ident.ident.to_string();
+
       //let arg_name = "arg_name";
       let arg_type = convert_type(&patty.ty).ts_type;
 
+      let arg = if let Pat::Wild(_) = *patty.pat {
+         "".to_string()
+      } else {
+         format!("{}: {}", arg_name.to_case(Case::Camel), arg_type)
+      };
+
       state.fns_file.push_str(&format!(
-         "  async {fn_name}{generics}({arg_name}: {arg_type}): {out_name} {{\n"
+         "  async {fn_name}{generics}({arg}): {out_name} {{\n"
          , fn_name = fn_name.to_case(Case::Camel)
          , generics = utils::extract_struct_generics(self.sig.generics.clone())
-         , arg_name = arg_name.to_case(Case::Camel)
-         , arg_type = arg_type
+         , arg = arg
          , out_name = out_name
       ));
 

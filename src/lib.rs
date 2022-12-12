@@ -179,6 +179,8 @@ fn process_rust_file(
     }
 }
 
+
+///
 pub fn generate_typescript_defs(input: Vec<PathBuf>, output: PathBuf, debug: bool) {
     let uses_typeinterface = output
         .as_os_str()

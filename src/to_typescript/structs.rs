@@ -26,7 +26,7 @@ impl super::ToTypescript for syn::ItemStruct {
 }
 
 pub fn process_fields(fields: syn::Fields, state: &mut ParseState, indentation_amount: i8, casing: Option<Case>) {
-    println!("\n process_fields(): {:?}", casing);
+    //println!("\n process_fields(): {:?}", casing);
     let space = utils::build_indentation(indentation_amount);
     for field in fields {
         let comments = utils::get_comments(field.attrs);

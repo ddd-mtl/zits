@@ -1,8 +1,8 @@
-# tsync
+# ztsync
 
-<a href="https://crates.io/crates/tsync"><img src="https://img.shields.io/crates/v/tsync.svg?style=for-the-badge" height="20" alt="License: MIT OR Apache-2.0" /></a>
+<a href="https://crates.io/crates/ztsync"><img src="https://img.shields.io/crates/v/zsync.svg?style=for-the-badge" height="20" alt="License: MIT OR Apache-2.0" /></a>
 
-A utility to generate typescript types from rust code.
+A utility to generate typescript types and ZomeProxy from rust zome code.
 
 # Install
 
@@ -11,18 +11,18 @@ There are two parts to this:
 1. The CLI tool (or see "Usage as a library"):
 
    ```
-   cargo install tsync
+   cargo install ztsync
    ```
 
-2. The dependency for rust projects (to use the `#[tsync]` attribute; see usage below)
+2. The dependency for rust projects (to use the `#[ztsync]` attribute; see usage below)
 
    ```
-   cargo add tsync@1
+   cargo add ztsync@1
    ```
 
 # Usage
 
-Mark structs with `#[tsync]` as below:
+Mark structs with `#[ztsync]` as below:
 
 ```rust
 /// src/main.rs
