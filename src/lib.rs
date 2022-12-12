@@ -22,8 +22,8 @@ const MAGIC_FIRST_LINE: &str = "/* This file is generated and managed by ztsync 
 /// macro to check from an syn::Item most of them have ident attribs
 /// that is the one we want to print but not sure!
 macro_rules! check_ztsync {
-    ($x: ident, in: $y: tt, $z: tt, $debug: ident) => {
-        let has_ztsync_attribute = has_ztsync_attribute(&$x.attrs);
+    ($x: ident, $a: ident, in: $y: tt, $z: tt, $debug: ident) => {
+        let has_ztsync_attribute = has_ztsync_attribute(&$a.attrs);
         if $debug {
             if has_ztsync_attribute {
                 println!("Encountered #[ztsync] {}: {}", $y, $x.ident.to_string());
@@ -141,28 +141,28 @@ fn process_rust_file(
     for item in syntax.items {
         match item {
             syn::Item::Const(exported_const) => {
-                check_ztsync!(exported_const, in: "const", {
+                check_ztsync!(exported_const, exported_const, in: "const", {
                     exported_const.convert_to_ts(state, debug, uses_typeinterface);
                 }, debug);
             }
             syn::Item::Struct(exported_struct) => {
-                check_ztsync!(exported_struct, in: "struct", {
+                check_ztsync!(exported_struct, exported_struct, in: "struct", {
                     exported_struct.convert_to_ts(state, debug, uses_typeinterface);
                 }, debug);
             }
             syn::Item::Enum(exported_enum) => {
-                check_ztsync!(exported_enum, in: "enum", {
+                check_ztsync!(exported_enum, exported_enum, in: "enum", {
                     exported_enum.convert_to_ts(state, debug, uses_typeinterface);
                 }, debug);
             }
             syn::Item::Type(exported_type) => {
-                check_ztsync!(exported_type, in: "type", {
+                check_ztsync!(exported_type, exported_type, in: "type", {
                     exported_type.convert_to_ts(state, debug, uses_typeinterface);
                 }, debug);
             }
             syn::Item::Fn(exported_fn) => {
-                let sig = exported_fn.sig;
-                check_ztsync!(sig, in: "fn", {
+                let sig = exported_fn.sig.clone();
+                check_ztsync!(sig, exported_fn, in: "fn", {
                     exported_fn.convert_to_ts(state, debug, uses_typeinterface);
                 }, debug);
             }
