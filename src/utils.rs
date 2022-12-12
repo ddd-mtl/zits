@@ -1,6 +1,4 @@
-use convert_case::Case;
 use syn::{Attribute, NestedMeta, __private::ToTokens};
-
 
 
 ///

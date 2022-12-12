@@ -1,6 +1,7 @@
 use crate::{utils, BuildState};
 use convert_case::{Case, Casing};
 use syn::__private::ToTokens;
+use syn::Fields;
 use crate::casing::get_serde_casing;
 
 
@@ -9,58 +10,70 @@ use crate::casing::get_serde_casing;
 /// (while the other forms such as adjacent tagging aren't supported).
 /// `renameAll` attributes for the name of the tag will also be adhered to.
 impl super::ToTypescript for syn::ItemEnum {
+
+    ///
     fn convert_to_ts(self, state: &mut BuildState, debug: bool, uses_typeinterface: bool) {
-        // check we don't have any tuple structs that could mess things up.
-        // if we do ignore this struct
-        for variant in self.variants.iter() {
-            for f in variant.fields.iter() {
-                if f.ident.is_none() {
-                    if debug {
-                        println!("#[ztsync] failed for enum {}", self.ident.to_string());
-                    }
-                    return;
-                }
-            }
+
+        // Tuple structs not allowed as that could mess things up if we do ignore this struct
+        let have_one_unnamed = self.variants.iter().any(|x| {
+            if let Fields::Unnamed(_) = x.fields { return true; }
+            return false;
+        });
+        let have_all_unnamed = !self.variants.iter().any(|x| {
+            if let Fields::Unnamed(_) = x.fields { return false; }
+            return true;
+        });
+
+        if have_one_unnamed && !have_all_unnamed {
+            println!("[ztsync] Failed for mixte enum {}", self.ident.to_string());
+            return;
         }
+
 
         state.types.push('\n');
 
         let comments = utils::get_comments(self.clone().attrs);
-        //let casing = utils::get_attribute_arg("serde", "renameAll", &self.attrs);
-        //let casing = to_enum_case(casing);
-
         let casing = get_serde_casing(&self.attrs);
 
 
-        let is_single = !self.variants.iter().any(|x| x.fields.len() > 0);
         state.write_comments(&comments, 0);
 
-        if is_single {
+        let have_all_single = !self.variants.iter().any(|x| x.fields.len() > 0);
+
+        if have_all_single {
             if utils::has_attribute_arg("derive", "Serialize_repr", &self.attrs) {
                 make_numeric_enum(self, state, casing, uses_typeinterface)
             } else {
-                make_enum(self, state, casing)
+                make_unit_enum(self, state, casing)
             }
+            return;
+        }
+
+
+        if have_all_unnamed {
+            make_unnamed_enum(self, state/*, casing*/);
+            return;
+        }
+
+        if let Some(tag_name) = utils::get_attribute_arg("serde", "tag", &self.attrs) {
+            make_variant_enum(tag_name, self, state, casing)
         } else {
-            if let Some(tag_name) = utils::get_attribute_arg("serde", "tag", &self.attrs) {
-                make_variant(tag_name, self, state, casing)
-            } else {
-                make_externally_tagged_variant(self, state, casing)
-            }
+            make_externally_tagged_variant_enum(self, state, casing)
         }
     }
 }
 
+
 /// This convert an all unit enums to a union of const strings in Typescript.
 /// It will ignore any discriminants.  
-fn make_enum(exported_struct: syn::ItemEnum, state: &mut BuildState, casing: Option<Case>) {
+fn make_unit_enum(exported_enum: syn::ItemEnum, state: &mut BuildState, casing: Option<Case>) {
     state.types.push_str(&format!(
         "export type {interface_name} =\n{space}",
-        interface_name = exported_struct.ident.to_string(),
+        interface_name = exported_enum.ident.to_string(),
         space = utils::build_indentation(1)
     ));
 
-    for variant in exported_struct.variants {
+    for variant in exported_enum.variants {
         let field_name = if let Some(casing) = casing {
             variant.ident.to_string().to_case(casing)
         } else {
@@ -71,6 +84,7 @@ fn make_enum(exported_struct: syn::ItemEnum, state: &mut BuildState, casing: Opt
 
     state.types.push_str(";\n");
 }
+
 
 /// Numeric enums. These will be converted using enum syntax
 /// ```ignore
@@ -97,7 +111,7 @@ fn make_enum(exported_struct: syn::ItemEnum, state: &mut BuildState, casing: Opt
 /// ```
 ///
 fn make_numeric_enum(
-    exported_struct: syn::ItemEnum,
+    exported_enum: syn::ItemEnum,
     state: &mut BuildState,
     casing: Option<Case>,
     uses_typeinterface: bool,
@@ -105,12 +119,12 @@ fn make_numeric_enum(
     let declare = if uses_typeinterface { "declare " } else { "" };
     state.types.push_str(&format!(
         "{declare}enum {interface_name} {{",
-        interface_name = exported_struct.ident.to_string()
+        interface_name = exported_enum.ident.to_string()
     ));
 
     let mut num = 0;
 
-    for variant in exported_struct.variants {
+    for variant in exported_enum.variants {
         state.types.push('\n');
         let field_name = if let Some(casing) = casing {
             variant.ident.to_string().to_case(casing)
@@ -165,19 +179,19 @@ fn make_numeric_enum(
 ///    Cat = 1,
 /// }
 /// ```
-fn make_variant(
+fn make_variant_enum(
     tag_name: String,
-    exported_struct: syn::ItemEnum,
+    exported_enum: syn::ItemEnum,
     state: &mut BuildState,
     casing: Option<Case>,
 ) {
     state.types.push_str(&format!(
-        "type {interface_name}{generics} =",
-        interface_name = exported_struct.ident.to_string(),
-        generics = utils::extract_struct_generics(exported_struct.generics.clone())
+        "export type {interface_name}{generics} =",
+        interface_name = exported_enum.ident.to_string(),
+        generics = utils::extract_struct_generics(exported_enum.generics.clone())
     ));
 
-    for variant in exported_struct.variants {
+    for variant in exported_enum.variants {
         state.types.push('\n');
         let comments = utils::get_comments(variant.attrs);
         state.write_comments(&comments, 2);
@@ -199,19 +213,20 @@ fn make_variant(
     state.types.push_str(";\n");
 }
 
+
 /// This follows serde's default approach of external tagging
-fn make_externally_tagged_variant(
-    exported_struct: syn::ItemEnum,
+fn make_externally_tagged_variant_enum(
+    exported_enum: syn::ItemEnum,
     state: &mut BuildState,
     casing: Option<Case>,
 ) {
     state.types.push_str(&format!(
-        "type {interface_name}{generics} =",
-        interface_name = exported_struct.ident.to_string(),
-        generics = utils::extract_struct_generics(exported_struct.generics.clone())
+        "export type {interface_name}{generics} =",
+        interface_name = exported_enum.ident.to_string(),
+        generics = utils::extract_struct_generics(exported_enum.generics.clone())
     ));
 
-    for variant in exported_struct.variants {
+    for variant in exported_enum.variants {
         state.types.push('\n');
         let comments = utils::get_comments(variant.attrs);
         state.write_comments(&comments, 2);
@@ -241,13 +256,23 @@ fn make_externally_tagged_variant(
     state.types.push_str(";\n");
 }
 
-// fn to_enum_case(val: impl Into<Option<String>>) -> Option<Case> {
-//     val.into().and_then(|x| {
-//         for (name, rule) in RENAME_RULES {
-//             if x == *name {
-//                 return Some(*rule);
-//             }
-//         }
-//         None
-//     })
-// }
+
+fn make_unnamed_enum(
+    exported_enum: syn::ItemEnum,
+    state: &mut BuildState,
+    //casing: Option<Case>,
+) {
+    println!("[ztsync] Making unnamed enum {}", exported_enum.ident.to_string());
+
+    state.types.push_str(&format!(
+        "export enum {interface_name} {{\n",
+        interface_name = exported_enum.ident.to_string(),
+    ));
+
+    for variant in exported_enum.variants {
+        let field_name = variant.ident.to_string().to_case(Case::Pascal);
+        state.types.push_str(&format!("\t{field_name} = '{field_name}',\n", field_name = field_name));
+    }
+
+    state.types.push_str("}\n");
+}

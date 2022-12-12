@@ -1,5 +1,4 @@
 use convert_case::{Case, Casing};
-use syn::__private::ToTokens;
 use syn::{FnArg, Pat, ReturnType};
 use crate::typescript::convert_type;
 use crate::{utils, BuildState};
@@ -21,7 +20,7 @@ impl super::ToTypescript for syn::ItemFn {
       };
       let out_name = convert_type(&out_type).ts_type;
 
-      /// Getting first argument
+      // Getting first argument
       let first_arg = self.sig.inputs.first().unwrap();
       //println!("first_arg = {:?}", first_arg);
       let FnArg::Typed(patty) = first_arg else {

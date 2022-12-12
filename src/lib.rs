@@ -26,9 +26,9 @@ macro_rules! check_ztsync {
         let has_ztsync_attribute = has_ztsync_attribute(&$a.attrs);
         if $debug {
             if has_ztsync_attribute {
-                println!("Encountered #[ztsync] {}: {}", $y, $x.ident.to_string());
+                println!("[ztsync] Encountered {}: {}", $y, $x.ident.to_string());
             } else {
-                println!("Encountered non-ztsync {}: {}", $y, $x.ident.to_string());
+                println!("[ztsync] Encountered non-ztsync {}: {}", $y, $x.ident.to_string());
             }
         }
 
@@ -50,10 +50,11 @@ macro_rules! check_ztsync {
 
 ///
 fn has_ztsync_attribute(attributes: &Vec<syn::Attribute>) -> bool {
-    println!("has_ztsync_attribute(): {:?}", attributes);
+    //println!("has_ztsync_attribute(): {:?}", attributes);
     return utils::has_attribute("hdk_entry_helper", attributes)
        || utils::has_attribute("hdk_extern", attributes)
        || utils::has_attribute("unit_enum", attributes)
+       || utils::has_attribute("hdk_entry_defs", attributes)
        || utils::has_attribute("ztsync", attributes)
        || utils::has_attribute("serde", attributes)
 }
