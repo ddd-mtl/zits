@@ -1,16 +1,16 @@
 use convert_case::{Case, Casing};
 use syn::{FnArg, Pat, ReturnType};
 use crate::typescript::convert_type;
-use crate::{utils, BuildState};
+use crate::{utils, ParseState, write_comments};
 
 ///
 impl super::ToTypescript for syn::ItemFn {
 
-   fn convert_to_ts(self, state: &mut BuildState, _debug: bool, _uses_typeinterface: bool) {
-      state.types.push('\n');
+   fn convert_to_ts(self, state: &mut ParseState, _debug: bool, _uses_typeinterface: bool) {
+      state.fns_file.push('\n');
 
       let comments = utils::get_comments(self.clone().attrs);
-      state.write_comments(&comments, 0);
+      write_comments(&mut state.fns_file, &comments, 0);
 
       let fn_name = self.sig.ident.to_string();
 
@@ -35,8 +35,8 @@ impl super::ToTypescript for syn::ItemFn {
       //let arg_name = "arg_name";
       let arg_type = convert_type(&patty.ty).ts_type;
 
-      state.types.push_str(&format!(
-         "async {fn_name}{generics}({arg_name}: {arg_type}): {out_name} {{\n"
+      state.fns_file.push_str(&format!(
+         "  async {fn_name}{generics}({arg_name}: {arg_type}): {out_name} {{\n"
          , fn_name = fn_name.to_case(Case::Camel)
          , generics = utils::extract_struct_generics(self.sig.generics.clone())
          , arg_name = arg_name.to_case(Case::Camel)
@@ -44,12 +44,12 @@ impl super::ToTypescript for syn::ItemFn {
          , out_name = out_name
       ));
 
-      state.types.push_str(&format!(
-             "\treturn this.call('{fn_name}', {arg_name});\n"
+      state.fns_file.push_str(&format!(
+             "  \treturn this.call('{fn_name}', {arg_name});\n"
              , fn_name = fn_name
              , arg_name = arg_name.to_case(Case::Camel)
       ));
 
-      state.types.push_str("}\n");
+      state.fns_file.push_str("  }\n");
    }
 }

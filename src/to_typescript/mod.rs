@@ -6,5 +6,5 @@ pub mod fns;
 
 
 pub trait ToTypescript {
-    fn convert_to_ts(self, state: &mut crate::BuildState, debug: bool, uses_typeinterface: bool);
+    fn convert_to_ts(self, state: &mut crate::ParseState, debug: bool, uses_typeinterface: bool);
 }

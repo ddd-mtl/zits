@@ -1,10 +1,10 @@
 use syn::__private::ToTokens;
 
-use crate::utils;
-use crate::BuildState;
+use crate::{utils, write_comments};
+use crate::ParseState;
 
 impl super::ToTypescript for syn::ItemConst {
-    fn convert_to_ts(self, state: &mut BuildState, debug: bool, uses_typeinterface: bool) {
+    fn convert_to_ts(self, state: &mut ParseState, debug: bool, uses_typeinterface: bool) {
         // ignore if we aren't in a type interface
         if uses_typeinterface {
             return;
@@ -40,13 +40,13 @@ impl super::ToTypescript for syn::ItemConst {
         };
         match body {
             Some(body) => {
-                state.types.push_str("\n");
+                state.types_file.push_str("\n");
                 let comments = utils::get_comments(self.attrs.to_owned());
-                state.write_comments(&comments, 0);
+                write_comments(&mut state.types_file, &comments, 0);
                 state
-                    .types
+                    .types_file
                     .push_str(&format!("export const {} = {};", name, body));
-                state.types.push_str("\n");
+                state.types_file.push_str("\n");
             }
             _ => {
                 if debug {
