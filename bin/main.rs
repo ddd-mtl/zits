@@ -44,5 +44,5 @@ struct Args {
 fn main() {
     let args: Args = Args::from_args();
 
-    tsync::generate_typescript_defs(args.input, args.output, args.debug);
+    ztsync::generate_typescript_defs(args.input, args.output, args.debug);
 }

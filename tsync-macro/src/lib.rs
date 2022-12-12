@@ -4,6 +4,6 @@ use proc_macro::TokenStream;
 
 // document this attribute
 #[proc_macro_attribute]
-pub fn tsync(_attr: TokenStream, item: TokenStream) -> TokenStream {
+pub fn ztsync(_attr: TokenStream, item: TokenStream) -> TokenStream {
     item
 }

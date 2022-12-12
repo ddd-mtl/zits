@@ -1,4 +1,4 @@
-/* This file is generated and managed by tsync */
+/* This file is generated and managed by ztsync */
 
 interface Book {
   name: string

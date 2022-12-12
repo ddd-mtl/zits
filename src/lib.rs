@@ -1,42 +1,44 @@
 mod to_typescript;
 mod typescript;
 pub mod utils;
+pub(crate) mod casing;
+
 
 use std::fs::File;
 use std::io::{BufRead, BufReader, Read, Write};
 use std::path::{Path, PathBuf};
-use tsync_macro;
+//use ztsync_macro;
 use walkdir::WalkDir;
 
-/// the #[tsync] attribute macro which marks structs and types to be translated into the final typescript definitions file
-pub use tsync_macro::tsync;
+/// the #[ztsync] attribute macro which marks structs and types to be translated into the final typescript definitions file
+//pub use ztsync_macro::ztsync;
 
 use crate::to_typescript::ToTypescript;
 
+
+const MAGIC_FIRST_LINE: &str = "/* This file is generated and managed by ztsync */";
+
+
 /// macro to check from an syn::Item most of them have ident attribs
 /// that is the one we want to print but not sure!
-macro_rules! check_tsync {
+macro_rules! check_ztsync {
     ($x: ident, in: $y: tt, $z: tt, $debug: ident) => {
-        let has_tsync_attribute = has_tsync_attribute(&$x.attrs);
+        let has_ztsync_attribute = has_ztsync_attribute(&$x.attrs);
         if $debug {
-            if has_tsync_attribute {
-                println!("Encountered #[tsync] {}: {}", $y, $x.ident.to_string());
+            if has_ztsync_attribute {
+                println!("Encountered #[ztsync] {}: {}", $y, $x.ident.to_string());
             } else {
-                println!("Encountered non-tsync {}: {}", $y, $x.ident.to_string());
+                println!("Encountered non-ztsync {}: {}", $y, $x.ident.to_string());
             }
         }
 
-        if has_tsync_attribute {
+        if has_ztsync_attribute {
             $z
         }
     };
 }
 
-pub struct BuildState /*<'a>*/ {
-    pub types: String,
-    pub unprocessed_files: Vec<PathBuf>,
-    // pub ignore_file_config: Option<gitignore::File<'a>>,
-}
+
 
 // fn should_ignore_file(ignore_file: &gitignore::File, entry: &DirEntry) -> bool {
 //     let path = entry.path();
@@ -44,9 +46,36 @@ pub struct BuildState /*<'a>*/ {
 //     ignore_file.is_excluded(&path).unwrap_or(false)
 // }
 
-fn has_tsync_attribute(attributes: &Vec<syn::Attribute>) -> bool {
-    utils::has_attribute("tsync", attributes)
+
+
+///
+fn has_ztsync_attribute(attributes: &Vec<syn::Attribute>) -> bool {
+    println!("has_ztsync_attribute(): {:?}", attributes);
+    return utils::has_attribute("hdk_entry_helper", attributes)
+       || utils::has_attribute("hdk_extern", attributes)
+       || utils::has_attribute("unit_enum", attributes)
+       || utils::has_attribute("ztsync", attributes)
+       || utils::has_attribute("serde", attributes)
 }
+
+// fn has_serde_attribute(attributes: &Vec<syn::Attribute>) -> bool {
+//     utils::has_attribute("serde", attributes)
+// }
+//
+// fn has_entry_attribute(attributes: &Vec<syn::Attribute>) -> bool {
+//     utils::has_attribute("hdk_entry_helper", attributes)
+// }
+
+
+
+///
+pub struct BuildState /*<'a>*/ {
+    pub types: String,
+    pub unprocessed_files: Vec<PathBuf>,
+    // pub ignore_file_config: Option<gitignore::File<'a>>,
+}
+
+
 
 impl BuildState {
     fn write_comments(&mut self, comments: &Vec<String>, indentation_amount: i8) {
@@ -68,6 +97,8 @@ impl BuildState {
     }
 }
 
+
+///
 fn process_rust_file(
     debug: bool,
     input_path: PathBuf,
@@ -110,23 +141,29 @@ fn process_rust_file(
     for item in syntax.items {
         match item {
             syn::Item::Const(exported_const) => {
-                check_tsync!(exported_const, in: "const", {
+                check_ztsync!(exported_const, in: "const", {
                     exported_const.convert_to_ts(state, debug, uses_typeinterface);
                 }, debug);
             }
             syn::Item::Struct(exported_struct) => {
-                check_tsync!(exported_struct, in: "struct", {
+                check_ztsync!(exported_struct, in: "struct", {
                     exported_struct.convert_to_ts(state, debug, uses_typeinterface);
                 }, debug);
             }
             syn::Item::Enum(exported_enum) => {
-                check_tsync!(exported_enum, in: "enum", {
+                check_ztsync!(exported_enum, in: "enum", {
                     exported_enum.convert_to_ts(state, debug, uses_typeinterface);
                 }, debug);
             }
             syn::Item::Type(exported_type) => {
-                check_tsync!(exported_type, in: "type", {
+                check_ztsync!(exported_type, in: "type", {
                     exported_type.convert_to_ts(state, debug, uses_typeinterface);
+                }, debug);
+            }
+            syn::Item::Fn(exported_fn) => {
+                let sig = exported_fn.sig;
+                check_ztsync!(sig, in: "fn", {
+                    exported_fn.convert_to_ts(state, debug, uses_typeinterface);
                 }, debug);
             }
             _ => {}
@@ -161,7 +198,7 @@ pub fn generate_typescript_defs(input: Vec<PathBuf>, output: PathBuf, debug: boo
 
     state
         .types
-        .push_str("/* This file is generated and managed by tsync */\n");
+        .push_str(&format!("{}\n", MAGIC_FIRST_LINE));
 
     for input_path in input {
         if !input_path.exists() {
@@ -208,6 +245,7 @@ pub fn generate_typescript_defs(input: Vec<PathBuf>, output: PathBuf, debug: boo
     }
 
     if debug {
+        println!("\n");
         println!("======================================");
         println!("FINAL FILE:");
         println!("======================================");
@@ -231,8 +269,8 @@ pub fn generate_typescript_defs(input: Vec<PathBuf>, output: PathBuf, debug: boo
                 .read_line(&mut first_line)
                 .expect("Unable to read line");
 
-            if first_line.trim() != "/* This file is generated and managed by tsync */" {
-                panic!("Aborting: specified output file exists but doesn't have \"/* This file is generated and managed by tsync */\" as the first line.")
+            if first_line.trim() != MAGIC_FIRST_LINE {
+                panic!("Aborting: specified output file exists but doesn't have \"{}\" as the first line. Found:\"{}\"", MAGIC_FIRST_LINE, first_line)
             }
         }
 

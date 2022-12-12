@@ -1,27 +1,26 @@
 [package]
-name = "tsync"
-description = "Generate typescript types from rust code."
+name = "ztsync"
+description = "Generate typescript types from zome code."
 version = "1.6.0"
 readme = "README.md"
-repository = "https://github.com/Wulf/tsync"
 license = "MIT OR Apache-2.0"
 keywords = ["typescript", "types", "generation", "macro"]
 categories = ["command-line-utilities", "development-tools", "development-tools::ffi", "web-programming"]
-authors = ["Haris <4259838+Wulf@users.noreply.github.com>"]
-edition = "2018"
+edition = "2021"
+rust-version = "1.65.0"
 
 [dependencies]
 structopt = "0.3.22"
 syn = { version = "1.0.75", features = ["full", "extra-traits"] }
 walkdir = "2.3.2"
-tsync-macro = "0.1.0"
+#ztsync-macro = "0.1.0"
 convert_case = "0.6.0"
 
 [lib]
-name = "tsync"
+name = "ztsync"
 path = "src/lib.rs"
 
 [[bin]]
-name = "tsync"
+name = "ztsync"
 test = false
 path = "bin/main.rs"

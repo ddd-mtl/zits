@@ -1,6 +1,7 @@
 /// test/rust.rs
-use tsync::tsync;
 
-#[tsync]
+#[ztsync]
 /// Time in UTC seconds
 type UTC = usize;
+
+

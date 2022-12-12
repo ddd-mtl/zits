@@ -1,17 +1,8 @@
 use crate::{utils, BuildState};
 use convert_case::{Case, Casing};
 use syn::__private::ToTokens;
+use crate::casing::get_serde_casing;
 
-static RENAME_RULES: &[(&str, convert_case::Case)] = &[
-    ("lowercase", Case::Lower),
-    ("UPPERCASE", Case::Upper),
-    ("PascalCase", Case::Pascal),
-    ("camelCase", Case::Camel),
-    ("snake_case", Case::Snake),
-    ("SCREAMING_SNAKE_CASE", Case::ScreamingSnake),
-    ("kebab-case", Case::Kebab),
-    // ("SCREAMING-KEBAB-CASE", _), // not supported by convert_case
-];
 
 /// Conversion of Rust Enum to Typescript using external tagging as per https://serde.rs/enum-representations.html
 /// however conversion will adhere to the `serde` `tag` such that enums are intenrally tagged
@@ -25,7 +16,7 @@ impl super::ToTypescript for syn::ItemEnum {
             for f in variant.fields.iter() {
                 if f.ident.is_none() {
                     if debug {
-                        println!("#[tsync] failed for enum {}", self.ident.to_string());
+                        println!("#[ztsync] failed for enum {}", self.ident.to_string());
                     }
                     return;
                 }
@@ -35,8 +26,11 @@ impl super::ToTypescript for syn::ItemEnum {
         state.types.push('\n');
 
         let comments = utils::get_comments(self.clone().attrs);
-        let casing = utils::get_attribute_arg("serde", "renameAll", &self.attrs);
-        let casing = to_enum_case(casing);
+        //let casing = utils::get_attribute_arg("serde", "renameAll", &self.attrs);
+        //let casing = to_enum_case(casing);
+
+        let casing = get_serde_casing(&self.attrs);
+
 
         let is_single = !self.variants.iter().any(|x| x.fields.len() > 0);
         state.write_comments(&comments, 0);
@@ -61,7 +55,7 @@ impl super::ToTypescript for syn::ItemEnum {
 /// It will ignore any discriminants.  
 fn make_enum(exported_struct: syn::ItemEnum, state: &mut BuildState, casing: Option<Case>) {
     state.types.push_str(&format!(
-        "type {interface_name} =\n{space}",
+        "export type {interface_name} =\n{space}",
         interface_name = exported_struct.ident.to_string(),
         space = utils::build_indentation(1)
     ));
@@ -199,7 +193,7 @@ fn make_variant(
             tag_name,
             field_name,
         ));
-        super::structs::process_fields(variant.fields, state, 6);
+        super::structs::process_fields(variant.fields, state, 6, casing);
         state.types.push_str("    }");
     }
     state.types.push_str(";\n");
@@ -238,7 +232,7 @@ fn make_externally_tagged_variant(
         } else {
             prepend = utils::build_indentation(6);
             state.types.push('\n');
-            super::structs::process_fields(variant.fields, state, 8);
+            super::structs::process_fields(variant.fields, state, 8, casing);
         }
         state
             .types
@@ -247,13 +241,13 @@ fn make_externally_tagged_variant(
     state.types.push_str(";\n");
 }
 
-fn to_enum_case(val: impl Into<Option<String>>) -> Option<Case> {
-    val.into().and_then(|x| {
-        for (name, rule) in RENAME_RULES {
-            if x == *name {
-                return Some(*rule);
-            }
-        }
-        None
-    })
-}
+// fn to_enum_case(val: impl Into<Option<String>>) -> Option<Case> {
+//     val.into().and_then(|x| {
+//         for (name, rule) in RENAME_RULES {
+//             if x == *name {
+//                 return Some(*rule);
+//             }
+//         }
+//         None
+//     })
+// }

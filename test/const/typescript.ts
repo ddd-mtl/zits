@@ -1,4 +1,4 @@
-/* This file is generated and managed by tsync */
+/* This file is generated and managed by ztsync */
 
 /** Test integer */
 export const CONST_TEST_1 = 0;

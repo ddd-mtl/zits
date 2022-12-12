@@ -59,7 +59,7 @@ And voilà!
 ```ts
 /// types.d.ts
 
-/* This file is generated and managed by tsync */
+/* This file is generated and managed by ztsync */
 
 // Doc comments are preserved too!
 interface Book {
@@ -158,7 +158,7 @@ A list of files which can't be opened or parsed successfully are listed after ex
 
 # Docs
 
-See `tsync --help` for more information.
+See `ztsync --help` for more information.
 
 Feel free to open tickets for support or feature requests.
 

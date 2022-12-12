@@ -9,7 +9,7 @@ impl super::ToTypescript for syn::ItemType {
         state.write_comments(&comments, 0);
         state
             .types
-            .push_str(format!("type {name} = {ty}", name = name, ty = ty.ts_type).as_str());
+            .push_str(format!("export type {name} = {ty}", name = name, ty = ty.ts_type).as_str());
 
         state.types.push_str("\n");
     }

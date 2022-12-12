@@ -1,5 +1,9 @@
+use convert_case::Case;
 use syn::{Attribute, NestedMeta, __private::ToTokens};
 
+
+
+///
 pub fn has_attribute(needle: &str, attributes: &Vec<syn::Attribute>) -> bool {
     attributes.iter().any(|attr| {
         attr.path
@@ -8,6 +12,7 @@ pub fn has_attribute(needle: &str, attributes: &Vec<syn::Attribute>) -> bool {
             .any(|segment| segment.ident.to_string() == needle)
     })
 }
+
 
 /// Get the value matching an attribute and argument combination
 pub fn get_attribute_arg(
@@ -42,6 +47,7 @@ pub fn get_attribute_arg(
     None
 }
 
+
 /// Check has an attribute arg.
 pub fn has_attribute_arg(needle: &str, arg: &str, attributes: &Vec<syn::Attribute>) -> bool {
     if let Some(attr) = get_attribute(needle, attributes) {
@@ -63,6 +69,7 @@ pub fn has_attribute_arg(needle: &str, arg: &str, attributes: &Vec<syn::Attribut
     }
     false
 }
+
 
 /// Get the doc string comments from the syn::attributes
 pub fn get_comments(attributes: Vec<syn::Attribute>) -> Vec<String> {
