@@ -9,8 +9,8 @@ impl super::ToTypescript for syn::ItemFn {
    fn convert_to_ts(self, state: &mut ParseState, _debug: bool, _uses_typeinterface: bool) {
       state.fns_file.push('\n');
 
-      let comments = utils::get_comments(self.clone().attrs);
-      write_comments(&mut state.fns_file, &comments, 0);
+      //let comments = utils::get_comments(self.clone().attrs);
+      //write_comments(&mut state.fns_file, &comments, 0);
 
       let fn_name = self.sig.ident.to_string();
 

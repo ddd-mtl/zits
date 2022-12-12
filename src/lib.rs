@@ -97,6 +97,15 @@ pub fn write_comments(target_str: &mut String, comments: &Vec<String>, indentati
 }
 
 
+fn write_type_defs_header(target_str: &mut String){
+    target_str.push_str(&format!("{}\n\n", MAGIC_FIRST_LINE));
+    target_str.push_str(&format!("import * from '@holochain-open-dev/core-types';
+import * from '@holochain/client';
+"));
+}
+
+
+
 ///
 fn process_rust_file(
     debug: bool,
@@ -196,12 +205,11 @@ pub fn generate_typescript_defs(input: Vec<PathBuf>, output: PathBuf, debug: boo
         // },
     };
 
-    state.types_file.push_str(&format!("{}\n", MAGIC_FIRST_LINE));
-
 
     let file_name = output.file_stem().unwrap().to_str().unwrap();
     let zome_name: &str = file_name.split(".").collect::<Vec<&str>>()[0];
 
+    write_type_defs_header(&mut state.types_file);
     write_zome_proxy_header(&mut state.fns_file, &output, &zome_name);
 
 
