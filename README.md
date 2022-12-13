@@ -23,8 +23,8 @@ cargo install zits
 Or by building the source-code locally:
 
 ```
-git clone https://github.com/ddd-mtl/zome-tsync.git
-cd zome-tsync
+git clone https://github.com/ddd-mtl/zits.git
+cd zits
 cargo install --path ./
 ```
 
