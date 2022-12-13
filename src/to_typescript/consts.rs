@@ -15,7 +15,7 @@ impl super::ToTypescript for syn::ItemConst {
         // e.g. const NAME: [type_ignored] = "some_string"
         // e.g. const NAME: [type_ignored] = serde_json::json!({ "I am valid": "json with no free variables" })
         // however doesn't enforce that the json! macro contains no variables.
-        // if your lucky you might have also tsynced them but otherwise you will get a typescript error.
+        // if your lucky you might have also zitsed them but otherwise you will get a typescript error.
 
         let name = self.ident.to_string();
         let body = match self.expr.as_ref() {
