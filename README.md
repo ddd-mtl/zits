@@ -2,7 +2,13 @@
 
 <a href="https://crates.io/crates/zits"><img src="https://img.shields.io/crates/v/zsync.svg?style=for-the-badge" height="20" alt="License: MIT OR Apache-2.0" /></a>
 
-A utility to generate Typescript bindings from Rust zome code.
+**Compatible with:**
+ - **HDK v0.0.154** & **HDI v0.1.3**
+ - **@holochain/client v0.9.3**
+ - **@holochain-open-dev/core-types  v0.6.1**
+ - **@ddd-qc/cell-proxy v0.9.6**
+
+A utility to generate Typescript bindings for Zome code in Rust.
 
 # Install
 
