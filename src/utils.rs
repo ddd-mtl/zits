@@ -21,7 +21,7 @@ pub fn write_comments(target_str: &mut String, comments: &Vec<String>, indentati
 
 ///
 pub fn has_zits_attribute(attributes: &Vec<syn::Attribute>) -> bool {
-    println!("has_zits_attribute(): {:?}", attributes);
+    //println!("has_zits_attribute(): {:?}", attributes);
     return has_attribute("hdk_entry_helper", attributes)
        || has_attribute("hdk_extern", attributes)
        //|| has_attribute("unit_enum", attributes)
