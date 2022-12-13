@@ -1,8 +1,7 @@
 /// test/rust.rs
-use tsync::tsync;
 
 /// Doc comments are preserved too!
-#[tsync]
+#[serde]
 struct Book {
     /// Name of the book.
     name: String,

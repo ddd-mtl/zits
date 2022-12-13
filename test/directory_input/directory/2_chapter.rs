@@ -1,9 +1,8 @@
-use tsync::tsync;
 
 /// Multiple line comments
 /// are formatted on
 /// separate lines
-#[tsync]
+#[serde]
 struct Chapter {
     title: String,
     pages: u32,

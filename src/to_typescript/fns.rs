@@ -1,7 +1,7 @@
 use convert_case::{Case, Casing};
 use syn::{FnArg, Pat, ReturnType};
 use crate::typescript::convert_type;
-use crate::{utils, ParseState, write_comments};
+use crate::{utils, ParseState};
 
 
 const HOLOCHAIN_CALLBACKS: [&str; 10] = [
@@ -28,7 +28,7 @@ impl super::ToTypescript for syn::ItemFn {
 
       /// Skip Holochain callbacks
       if HOLOCHAIN_CALLBACKS.contains(&fn_name.as_str()) {
-         println!("Skipping callback '{}()'", fn_name);
+         println!("[zits][info] Skipping callback '{}()'", fn_name);
          return;
       }
 

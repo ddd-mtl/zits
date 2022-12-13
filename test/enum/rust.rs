@@ -23,7 +23,7 @@ enum Message {
 }
 
 /// The default enum conversion uses external tagging
-#[ztsync]
+#[serde]
 enum ExternalMessage {
     /// Per Enum case Docs One
     UnitCaseLeft,
@@ -42,12 +42,12 @@ enum ExternalMessage {
 /// All Unit Enums go to union of constant strings
 /// even if have explicit numeric annotations
 /// There is no case renaming on default
-#[ztsync]
+#[serde]
 enum Animal {
     Dog,
     Cat,
 }
-#[ztsync]
+
 #[serde(renameAll = "snake_case")]
 enum AnimalTwo {
     DogLongExtra = 2,
@@ -56,7 +56,7 @@ enum AnimalTwo {
 
 /// Integer enums should follow rust discrimination if literals (doesn't evaluate expression)
 #[derive(Serialize_repr)]
-#[ztsync]
+#[serde]
 enum Foo {
     Bar,       // 0
     Baz = 123, // 123

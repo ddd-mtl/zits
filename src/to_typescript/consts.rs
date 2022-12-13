@@ -51,7 +51,7 @@ impl super::ToTypescript for syn::ItemConst {
             _ => {
                 if debug {
                     println!(
-                        "#[ztsync] failed for const {}",
+                        "#[zits][warn] failed for const {}",
                         self.to_token_stream().to_string()
                     );
                 }

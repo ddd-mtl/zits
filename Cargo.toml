@@ -1,11 +1,11 @@
 [package]
-name = "ztsync"
-description = "Generate typescript types from zome code."
-version = "0.1.0"
+name = "zits"
+description = "Generate typescript bindings from zome code (Zome Into TypeScript)"
+version = "1.0.0"
 readme = "README.md"
 license = "MIT OR Apache-2.0"
-keywords = ["typescript", "types", "generation", "macro"]
-categories = ["command-line-utilities", "development-tools", "development-tools::ffi", "holochain"]
+keywords = ["typescript", "types", "generation", "holochain"]
+categories = ["command-line-utilities", "development-tools", "development-tools::ffi"]
 edition = "2021"
 rust-version = "1.65.0"
 
@@ -13,14 +13,13 @@ rust-version = "1.65.0"
 structopt = "0.3.22"
 syn = { version = "1.0.75", features = ["full", "extra-traits"] }
 walkdir = "2.3.2"
-#ztsync-macro = "0.1.0"
 convert_case = "0.6.0"
 
 [lib]
-name = "ztsync"
+name = "zits"
 path = "src/lib.rs"
 
 [[bin]]
-name = "ztsync"
+name = "zits"
 test = false
 path = "bin/main.rs"

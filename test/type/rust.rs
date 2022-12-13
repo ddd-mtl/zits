@@ -1,6 +1,6 @@
 /// test/rust.rs
 
-#[ztsync]
+#[serde]
 /// Time in UTC seconds
 type UTC = usize;
 

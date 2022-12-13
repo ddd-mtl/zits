@@ -262,7 +262,7 @@ fn make_unnamed_enum(
     state: &mut ParseState,
     //casing: Option<Case>,
 ) {
-    println!("[ztsync] Making unnamed enum {}", exported_enum.ident.to_string());
+    println!("[zits][debug] Making unnamed enum {}", exported_enum.ident.to_string());
 
     state.types_file.push_str(&format!(
         "export enum {interface_name} {{\n",
