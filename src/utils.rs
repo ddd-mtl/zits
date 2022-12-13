@@ -1,6 +1,35 @@
 use syn::{Attribute, NestedMeta, __private::ToTokens};
 
 
+
+///
+pub fn write_comments(target_str: &mut String, comments: &Vec<String>, indentation_amount: i8) {
+    let indentation = build_indentation(indentation_amount);
+    match comments.len() {
+        0 => (),
+        1 => target_str.push_str(&format!("{}/** {} */\n", indentation, &comments[0])),
+        _ => {
+            target_str.push_str(&format!("{}/**\n", indentation));
+            for comment in comments {
+                target_str.push_str(&format!("{} * {}\n", indentation, &comment))
+            }
+            target_str.push_str(&format!("{} */\n", indentation))
+        }
+    }
+}
+
+
+///
+pub fn has_zits_attribute(attributes: &Vec<syn::Attribute>) -> bool {
+    //println!("has_zits_attribute(): {:?}", attributes);
+    return has_attribute("hdk_entry_helper", attributes)
+       || has_attribute("hdk_extern", attributes)
+       //|| has_attribute("unit_enum", attributes)
+       || has_attribute("hdk_entry_defs", attributes)
+       || has_attribute("serde", attributes)
+}
+
+
 ///
 pub fn has_attribute(needle: &str, attributes: &Vec<syn::Attribute>) -> bool {
     attributes.iter().any(|attr| {

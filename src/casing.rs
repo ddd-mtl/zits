@@ -2,7 +2,7 @@ use convert_case::Case;
 use crate::utils;
 
 
-static RENAME_RULES: &[(&str, convert_case::Case)] = &[
+const RENAME_RULES: &[(&str, convert_case::Case)] = &[
    ("lowercase", Case::Lower),
    ("UPPERCASE", Case::Upper),
    ("PascalCase", Case::Pascal),

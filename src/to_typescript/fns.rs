@@ -1,5 +1,5 @@
 use convert_case::{Case, Casing};
-use syn::{FnArg, Pat, ReturnType};
+use syn::{Attribute, FnArg, Ident, Pat, ReturnType};
 use crate::typescript::convert_type;
 use crate::{utils, ParseState};
 
@@ -17,8 +17,12 @@ const HOLOCHAIN_CALLBACKS: [&str; 10] = [
 ///
 impl super::ToTypescript for syn::ItemFn {
 
+   fn attrs(&self) -> Vec<Attribute> {self.attrs.clone()}
+   fn ident(&self) -> Ident {self.sig.ident.clone()}
+   fn kind(&self) -> &'static str {"fn"}
+
    fn convert_to_ts(self, state: &mut ParseState, _debug: bool, _uses_typeinterface: bool) {
-      state.fns_file.push('\n');
+      state.zome_proxy_output.push('\n');
 
       //let comments = utils::get_comments(self.clone().attrs);
       //write_comments(&mut state.fns_file, &comments, 0);
@@ -61,7 +65,7 @@ impl super::ToTypescript for syn::ItemFn {
          format!("{}: {}", arg_name.to_case(Case::Camel), arg_type)
       };
 
-      state.fns_file.push_str(&format!(
+      state.zome_proxy_output.push_str(&format!(
          "  async {fn_name}{generics}({arg}): {out_name} {{\n"
          , fn_name = fn_name.to_case(Case::Camel)
          , generics = utils::extract_struct_generics(self.sig.generics.clone())
@@ -69,12 +73,12 @@ impl super::ToTypescript for syn::ItemFn {
          , out_name = out_name
       ));
 
-      state.fns_file.push_str(&format!(
+      state.zome_proxy_output.push_str(&format!(
              "  \treturn this.call('{fn_name}', {arg_name});\n"
              , fn_name = fn_name
              , arg_name = arg_name.to_case(Case::Camel)
       ));
 
-      state.fns_file.push_str("  }\n");
+      state.zome_proxy_output.push_str("  }\n");
    }
 }

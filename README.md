@@ -6,7 +6,6 @@ A utility to generate Typescript bindings from Rust zome code.
 
 # Install
 
-
 The CLI can be installed from [crates.io](https://crates.io):
 
 ```

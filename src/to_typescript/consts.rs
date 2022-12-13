@@ -1,9 +1,15 @@
 use syn::__private::ToTokens;
+use syn::{Attribute, Ident};
 
-use crate::{utils, write_comments};
+use crate::utils::*;
 use crate::ParseState;
 
 impl super::ToTypescript for syn::ItemConst {
+
+    fn attrs(&self) -> Vec<Attribute> {self.attrs.clone()}
+    fn ident(&self) -> Ident {self.ident.clone()}
+    fn kind(&self) -> &'static str {"const"}
+
     fn convert_to_ts(self, state: &mut ParseState, debug: bool, uses_typeinterface: bool) {
         // ignore if we aren't in a type interface
         if uses_typeinterface {
@@ -40,13 +46,13 @@ impl super::ToTypescript for syn::ItemConst {
         };
         match body {
             Some(body) => {
-                state.types_file.push_str("\n");
-                let comments = utils::get_comments(self.attrs.to_owned());
-                write_comments(&mut state.types_file, &comments, 0);
+                state.type_defs_output.push_str("\n");
+                let comments = get_comments(self.attrs.to_owned());
+                write_comments(&mut state.type_defs_output, &comments, 0);
                 state
-                    .types_file
+                    .type_defs_output
                     .push_str(&format!("export const {} = {};", name, body));
-                state.types_file.push_str("\n");
+                state.type_defs_output.push_str("\n");
             }
             _ => {
                 if debug {
