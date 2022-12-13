@@ -1,7 +1,9 @@
 use std::fs::File;
 use std::io::Read;
 use std::path::PathBuf;
-use crate::GenConfig;
+use convert_case::{Case, Casing};
+use crate::{GenConfig, MAGIC_FIRST_LINE};
+use crate::holochain_imports::{HOD_CORE_TYPES_IMPORTS, HOLOCHAIN_CLIENT_IMPORTS};
 use crate::to_typescript::ToTypescript;
 use crate::utils::has_zits_attribute;
 
@@ -86,4 +88,47 @@ impl ParseState {
          }
       }
    }
+
+   pub fn write_type_defs_header(&mut self) {
+      self.type_defs_output.push_str(&format!("{}\n", MAGIC_FIRST_LINE));
+      if self.config.can_hc_imports {
+         self.type_defs_output.push_str(HOLOCHAIN_CLIENT_IMPORTS);
+         self.type_defs_output.push_str(HOD_CORE_TYPES_IMPORTS);
+      }
+   }
+
+
+   pub fn write_type_defs_import(&mut self, types_path: &PathBuf) {
+      let mut types = String::new();
+      for new_type in self.new_types.iter() {
+         types.push_str(&new_type);
+         types.push_str(", ");
+      }
+      self.zome_proxy_output.insert_str(
+         MAGIC_FIRST_LINE.len() + 1,
+         &format!("\nimport {{{}}} from './{}';", types, types_path.file_name().unwrap().to_str().unwrap()));
+   }
+
+
+   ///
+   pub fn write_zome_proxy_header(&mut self, zome_name: &str) {
+      self.zome_proxy_output.push_str(&format!("{}\n", MAGIC_FIRST_LINE));
+      if self.config.can_hc_imports {
+         self.zome_proxy_output.push_str(HOLOCHAIN_CLIENT_IMPORTS);
+         self.zome_proxy_output.push_str(HOD_CORE_TYPES_IMPORTS);
+      }
+
+      self.zome_proxy_output.push_str(&format!("
+import {{ZomeProxy}} from '@ddd-qc/lit-happ';
+
+/**
+ *
+ */
+export class {zome_name}Proxy extends ZomeProxy {{
+  static readonly DEFAULT_ZOME_NAME = \"z{zome_name}\"
+ "
+                                   , zome_name = zome_name.to_case(Case::Pascal)
+      ));
+   }
+
 }
