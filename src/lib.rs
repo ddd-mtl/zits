@@ -111,7 +111,7 @@ pub fn generate_typescript_bindings(
         /// ZomeProxy file footer
         state.zome_proxy_output.push_str(&format!("}}\n"));
         /// Append type imports to ZomeProxy
-        state.write_type_defs_import(&output);
+        state.write_type_defs_import(&zome_name);
     }
 
     /** */

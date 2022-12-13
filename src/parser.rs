@@ -43,7 +43,7 @@ impl ParseState {
       if self.config.can_debug {
          println!("[zits][debug] Encountered {} \"{}\"", item.kind(), item.ident().to_string());
       }
-      self.new_types.push(item.ident().to_string());
+      if item.kind() != "fn" {self.new_types.push(item.ident().to_string());}
       item.convert_to_ts(self, self.config.can_debug, self.config.uses_typeinterface);
    }
 
@@ -98,7 +98,7 @@ impl ParseState {
    }
 
 
-   pub fn write_type_defs_import(&mut self, types_path: &PathBuf) {
+   pub fn write_type_defs_import(&mut self, zome_name: &str) {
       let mut types = String::new();
       for new_type in self.new_types.iter() {
          types.push_str(&new_type);
@@ -106,7 +106,7 @@ impl ParseState {
       }
       self.zome_proxy_output.insert_str(
          MAGIC_FIRST_LINE.len() + 1,
-         &format!("\nimport {{{}}} from './{}';", types, types_path.file_name().unwrap().to_str().unwrap()));
+         &format!("\nimport {{{}}} from './{}';", types, zome_name));
    }
 
 

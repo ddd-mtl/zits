@@ -1,6 +1,6 @@
 [package]
 name = "zits"
-description = "Generate typescript bindings from zome code (Zome Into TypeScript)"
+description = "Generate typescript bindings for zome code in Rust"
 version = "1.0.0"
 readme = "README.md"
 license = "MIT OR Apache-2.0"

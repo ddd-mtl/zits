@@ -5,3 +5,8 @@
 type UTC = usize;
 
 
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct ImportPieceInput {
+   pub piece_type_name: String, // FIXME use UnitEntryTypes and AppEntryTypeName
+   pub piece_entry: Entry,
+}

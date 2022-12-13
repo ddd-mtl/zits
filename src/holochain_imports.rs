@@ -2,7 +2,7 @@
 /// from @Holochain/client v0.9.3
 pub const HOLOCHAIN_CLIENT_IMPORTS: &str = "
 import {
-// Types
+/** Types */
 HoloHash,
 AgentPubKey,
 DnaHash,
@@ -20,7 +20,7 @@ RoleId,
 InstalledCell,
 Timestamp,
 HoloHashed,
-// Action
+/** Action */
 SignedActionHashed,
 ActionHashed,
 ActionType,
@@ -36,35 +36,35 @@ CloseChain,
 Update,
 Delete,
 Create,
-// Capabilities,
+/** Capabilities */
 CapSecret,
 CapClaim,
 ZomeCallCapGrant,
 CapAccess,
 CapGrant,
-// CounterSigning,
-CounterSigningSessionData,
-PreflightRequest,
-CounterSigningSessionTimes,
-ActionBase,
-CounterSigningAgents,
-PreflightBytes,
-Role,
-CountersigningAgentState,
-// DhtOps
+/** CounterSigning */
+//CounterSigningSessionData,
+//PreflightRequest,
+//CounterSigningSessionTimes,
+//ActionBase,
+//CounterSigningAgents,
+//PreflightBytes,
+//Role,
+//CountersigningAgentState,
+/** DhtOps */
 DhtOpType,
 DhtOp,
 getDhtOpType,
 getDhtOpAction,
 getDhtOpEntry,
 getDhtOpSignature,
-// Entry
+/** Entry */
 EntryVisibility,
 AppEntryType,
 EntryType,
 EntryContent,
 Entry,
-// Record
+/** Record */
 Record,
 RecordEntry,
    } from '@holochain/client';

@@ -5,11 +5,10 @@
 **Compatible with:**
  - **HDK v0.0.154** & **HDI v0.1.3**
  - **@holochain/client v0.9.3**
- - **@holochain-open-dev/core-types  v0.6.1**
+ - **@holochain-open-dev/core-types v0.6.1**
  - **@ddd-qc/cell-proxy v0.9.6**
 
-A utility to generate Typescript bindings for Zome code in Rust.
-
+A utility to generate Typescript bindings for Zome code in Rust (**Z**ome **I**nto **T**ype**S**cript)
 # Install
 
 The CLI can be installed from [crates.io](https://crates.io):
@@ -128,8 +127,8 @@ Support has been added for functions, but only the first argument is considered 
  - `Option<T>` converts to `T | null`
  - A destructured argument will be converted to `input`
 
- Additionnaly support for enums of unnamed variants has been added and converts to a string enum:
- Example:
+ Additionnaly support for enums of unnamed variants has been added and converts to a string enum.
+ ### Example
  Input:
 ```rust
 #[hdk_entry_defs]

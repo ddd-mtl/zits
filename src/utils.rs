@@ -21,12 +21,24 @@ pub fn write_comments(target_str: &mut String, comments: &Vec<String>, indentati
 
 ///
 pub fn has_zits_attribute(attributes: &Vec<syn::Attribute>) -> bool {
-    //println!("has_zits_attribute(): {:?}", attributes);
+    println!("has_zits_attribute(): {:?}", attributes);
     return has_attribute("hdk_entry_helper", attributes)
        || has_attribute("hdk_extern", attributes)
        //|| has_attribute("unit_enum", attributes)
        || has_attribute("hdk_entry_defs", attributes)
        || has_attribute("serde", attributes)
+       || has_attribute_arg("derive", "Serialize", &attributes)
+}
+
+
+///
+pub fn has_derive_attribute(needle: &str, attributes: &Vec<syn::Attribute>) -> bool {
+    attributes.iter().any(|attr| {
+        attr.path
+            .segments
+            .iter()
+            .any(|segment| segment.ident.to_string() == needle)
+    })
 }
 
 

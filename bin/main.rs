@@ -14,14 +14,14 @@ struct Args {
     ///
     #[structopt(
     long = "no-imports",
-    help = "Do not add imports for holochain types in generated typescript files",
+    help = "Do not add generate imports for holochain types",
     )]
     no_imports: bool,
 
     ///
     #[structopt(
     long = "no-proxy",
-    help = "Do not generated a ZomeProxy file",
+    help = "Do not generate ZomeProxy",
     )]
     no_proxy: bool,
 
