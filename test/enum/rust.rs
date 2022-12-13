@@ -64,7 +64,7 @@ enum Foo {
 }
 
 
-#[unit_enum(PlaysetTypes)]
+#[unit_enum(FooTypes)]
 enum Foo {
     //Bar,
     Bar(Boo),       // 0
@@ -76,7 +76,7 @@ enum Foo {
 #[derive(Clone, Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub enum MarkerPiece {
-    Svg(EntryHashB64),
+    Svg(u32),
     EmojiGroup(EntryHashB64),
 }
 
@@ -92,4 +92,21 @@ pub enum PlaysetEntry {
     Template(Template),
     #[entry_def(required_validations = 2, visibility = "public")]
     Space(Space),
+}
+
+
+#[derive(Serialize, Deserialize, SerializedBytes, Debug)]
+#[serde(tag = "type", content = "content")]
+pub enum Message {
+    Ping(AgentPubKeyB64),
+    Pong(AgentPubKeyB64),
+    NewHere(HereOutput),
+    DeleteHere((EntryHashB64, ActionHashB64)), /// sessionEh, hereLinkHh
+    UpdateHere((u32, ActionHashB64, Here)),    ///[index, newLinkAh, newHereEntry]}
+    NewSession((EntryHashB64, PlacementSession)),
+    /// - with entry hash of entries
+    NewSpace(EntryHashB64),
+    NewTemplate(EntryHashB64),
+    NewSvgMarker(EntryHashB64),
+    NewEmojiGroup(EntryHashB64),
 }

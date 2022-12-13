@@ -3,7 +3,7 @@ use syn::{Attribute, Ident};
 use crate::typescript::convert_type;
 use crate::{utils, ParseState};
 use crate::casing::get_serde_casing;
-use crate::utils::write_comments;
+use crate::utils::{write_comments};
 
 
 impl super::ToTypescript for syn::ItemStruct {
@@ -21,10 +21,17 @@ impl super::ToTypescript for syn::ItemStruct {
         //let casing = utils::get_attribute_arg("serde", "renameAll", &self.attrs);
         let casing = get_serde_casing(&self.attrs);
 
+        let /*mut*/ name = self.clone().ident.to_string();
+
+        // Dont rename because other types might refer to it
+        // if has_attribute("hdk_entry_helper", &self.attrs) {
+        //     name.push_str("Entry");
+        // }
+
         state.type_defs_output.push_str(&format!(
-            "export interface {interface_name}{generics} {{\n",
-            interface_name = self.clone().ident.to_string(),
-            generics = utils::extract_struct_generics(self.generics.clone())
+            "export interface {}{} {{\n",
+            name,
+            utils::extract_struct_generics(self.generics.clone())
         ));
         process_fields(self.fields, state, 2, casing);
         state.type_defs_output.push_str("}");
@@ -45,7 +52,7 @@ pub fn process_fields(fields: syn::Fields, state: &mut ParseState, indentation_a
         } else {
             field.ident.unwrap().to_string()
         };
-        let field_type = convert_type(&field.ty);
+        let field_type = convert_type(&field.ty, false);
         state.type_defs_output.push_str(&format!(
             "{space}{field_name}{optional_parameter_token}: {field_type}\n",
             space = space,

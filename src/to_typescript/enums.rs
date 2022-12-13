@@ -2,7 +2,9 @@ use crate::{utils, ParseState};
 use convert_case::{Case, Casing};
 use syn::__private::ToTokens;
 use syn::{Attribute, Fields, Ident};
+use syn::Type::Path;
 use crate::casing::get_serde_casing;
+use crate::typescript::convert_type;
 use crate::utils::write_comments;
 
 
@@ -57,7 +59,8 @@ impl super::ToTypescript for syn::ItemEnum {
 
 
         if have_all_unnamed {
-            make_unnamed_enum(self, state/*, casing*/);
+            make_unnamed_string_enum(self.clone(), state/*, casing*/);
+            make_unnamed_enum(self, state);
             return;
         }
 
@@ -262,17 +265,11 @@ fn make_externally_tagged_variant_enum(
 }
 
 
-fn make_unnamed_enum(
-    exported_enum: syn::ItemEnum,
-    state: &mut ParseState,
-    //casing: Option<Case>,
-) {
-    println!("[zits][debug] Making unnamed enum {}", exported_enum.ident.to_string());
+///
+fn make_unnamed_string_enum(exported_enum: syn::ItemEnum, state: &mut ParseState) {
+    println!("[zits][debug] Making unnamed string enum {}", exported_enum.ident.to_string());
 
-    state.type_defs_output.push_str(&format!(
-        "export enum {interface_name} {{\n",
-        interface_name = exported_enum.ident.to_string(),
-    ));
+    state.type_defs_output.push_str(&format!("export enum {}Type {{\n", exported_enum.ident.to_string()));
 
     for variant in exported_enum.variants {
         let field_name = variant.ident.to_string().to_case(Case::Pascal);
@@ -280,4 +277,65 @@ fn make_unnamed_enum(
     }
 
     state.type_defs_output.push_str("}\n");
+}
+
+
+
+
+///
+fn make_unnamed_enum(exported_enum: syn::ItemEnum, state: &mut ParseState) {
+    let enum_name = exported_enum.ident.to_string();
+    println!("[zits][debug] Making unnamed enum {}", enum_name);
+
+    let mut temp = String::new();
+    let mut succeeded = true;
+    /// write each enum variant as type
+    let mut variant_types = Vec::new();
+    for variant in exported_enum.variants {
+        let variant_name = variant.ident.to_string();
+        let variant_type_name = format!("{}Variant{}", enum_name, variant_name.to_case(Case::Pascal));
+        let variant_type = get_segment_ident(variant.fields, &enum_name);
+        if variant_type.is_err() {
+            succeeded = false;
+            break;
+        }
+        variant_types.push(variant_type_name.clone());
+        temp.push_str(&format!("export type {variant_type_name} = {{{variant_name}: {variant_type}}}\n",
+                                                 variant_type_name = variant_type_name,
+                                                 variant_name = variant_name.to_case(Case::Camel),
+                                                 variant_type = variant_type.unwrap(),
+        ));
+    }
+    ///
+    if !succeeded {
+        state.type_defs_output.push_str(&format!("export type {} = unknown\n", enum_name));
+        return;
+    }
+    state.type_defs_output.push_str(&temp);
+    /// write enum as type
+    state.type_defs_output.push_str(&format!("export type {} = \n", enum_name));
+    for variant_type in variant_types.into_iter() {
+        state.type_defs_output.push_str(&format!(" | {}", variant_type));
+    }
+    state.type_defs_output.push_str(";\n");
+}
+
+
+///
+fn get_segment_ident(fields: Fields, enum_name: &str) -> Result<String, String> {
+    let Fields::Unnamed(fields) = fields else {
+        return Err(format!("[zits][error] variant is not unnamed in enum {}", enum_name));
+    };
+    if fields.unnamed.len() != 1 {
+        return Err(format!("[zits][error] unnamed variant does not have one field {:?}", fields.unnamed));
+    }
+
+    return Ok(convert_type(&fields.unnamed[0].ty, false).ts_type);
+    // let Path(typed) = fields.unnamed[0].clone().ty else {
+    //     return Err(format!("[zits][error] unnamed variant is not of type Path {:?}", fields.unnamed));
+    // };
+    // if typed.path.segments.len() != 1 {
+    //     return Err(format!("[zits][error] unnamed variant does not have one segment {:?}", fields.unnamed));
+    // }
+    // Ok(typed.path.segments[0].ident.to_string())
 }

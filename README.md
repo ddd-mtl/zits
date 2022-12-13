@@ -8,7 +8,10 @@
  - **@holochain-open-dev/core-types v0.6.1**
  - **@ddd-qc/cell-proxy v0.9.6**
 
-A utility to generate Typescript bindings for Zome code in Rust (**Z**ome **I**nto **T**ype**S**cript)
+
+A utility to generate Typescript bindings for Zome code in Rust (**Z**ome **I**nto **T**ype**S**cript).
+
+
 # Install
 
 The CLI can be installed from [crates.io](https://crates.io):
@@ -124,6 +127,7 @@ Support added for types defined in `@holochain/client` and `@holochain-open-dev/
 
 Support has been added for functions, but only the first argument is considered since as this is a limitation of zome functions. Support includes the following:
  - `ExternResult<T>` converts to `Promise<T>`
+ - `BTreeMap<T>` converts to `Dictionary<T>`
  - `Option<T>` converts to `T | null`
  - A destructured argument will be converted to `input`
 

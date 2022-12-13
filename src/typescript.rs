@@ -13,18 +13,18 @@ impl From<String> for TsType {
     }
 }
 
-fn convert_generic(gen_ty: &syn::GenericArgument) -> TsType {
+fn convert_generic(gen_ty: &syn::GenericArgument, is_return_type: bool) -> TsType {
     //println!("convert_generic(): {:?}", gen_ty);
     match gen_ty {
-        syn::GenericArgument::Type(ty) => convert_type(ty),
+        syn::GenericArgument::Type(ty) => convert_type(ty, is_return_type),
         _ => "unknown".to_string().into(),
     }
 }
 
-pub fn convert_type(ty: &syn::Type) -> TsType {
+pub fn convert_type(ty: &syn::Type, is_return_type: bool) -> TsType {
     match ty {
         //syn::Type::Paren(p) => "void".to_string().into(),
-        syn::Type::Reference(p) => convert_type(&*p.elem),
+        syn::Type::Reference(p) => convert_type(&*p.elem, is_return_type),
         syn::Type::Path(p) => {
             let segment = p.path.segments.last().unwrap();
             let ident = &segment.ident;
@@ -58,7 +58,7 @@ pub fn convert_type(ty: &syn::Type) -> TsType {
                     }
                     syn::PathArguments::AngleBracketed(anglebracketed_argument) => format!(
                         "Dictionary<{}>",
-                        match convert_generic(anglebracketed_argument.args.first().unwrap()) {
+                        match convert_generic(anglebracketed_argument.args.first().unwrap(), is_return_type) {
                             TsType{ is_optional: true, ts_type } => format!("{} | undefined", ts_type),
                             TsType{ is_optional: false, ts_type } => ts_type
                         }
@@ -72,7 +72,7 @@ pub fn convert_type(ty: &syn::Type) -> TsType {
                             format!("Promise<{:?}>", parenthesized_argument)
                         }
                         syn::PathArguments::AngleBracketed(anglebracketed_argument) => {
-                            format!("Promise<{}>", convert_generic(anglebracketed_argument.args.first().unwrap())
+                            format!("Promise<{}>", convert_generic(anglebracketed_argument.args.first().unwrap(), is_return_type)
                                .ts_type)
                         }
                         _ => "unknown".to_string(),
@@ -85,8 +85,12 @@ pub fn convert_type(ty: &syn::Type) -> TsType {
                             format!("{:?}", parenthesized_argument)
                         }
                         syn::PathArguments::AngleBracketed(anglebracketed_argument) => {
-                            format!("{} | null", convert_generic(anglebracketed_argument.args.first().unwrap())
-                               .ts_type)
+                            let tst = convert_generic(anglebracketed_argument.args.first().unwrap(), is_return_type);
+                            if is_return_type {
+                                format!("{} | null", tst.ts_type)
+                            } else {
+                                tst.ts_type
+                            }
                         }
                         _ => "unknown".to_string(),
                     },
@@ -98,7 +102,7 @@ pub fn convert_type(ty: &syn::Type) -> TsType {
                     syn::PathArguments::AngleBracketed(anglebracketed_argument) => format!(
                         //"Array<{}>",
                         "{}[]",
-                        match convert_generic(anglebracketed_argument.args.first().unwrap()) {
+                        match convert_generic(anglebracketed_argument.args.first().unwrap(), is_return_type) {
                             TsType{ is_optional: true, ts_type } => format!("{} | undefined", ts_type),
                             TsType{ is_optional: false, ts_type } => ts_type
                         }
@@ -112,7 +116,7 @@ pub fn convert_type(ty: &syn::Type) -> TsType {
             if p.elems.is_empty() {return "void".to_string().into();}
             let mut str = String::from("[");
             for elem in p.elems.iter() {
-                str.push_str(&convert_type(&elem).ts_type);
+                str.push_str(&convert_type(&elem, is_return_type).ts_type);
                 str.push_str(", ");
             }
             str.push(']');

@@ -40,7 +40,7 @@ impl super::ToTypescript for syn::ItemFn {
          eprintln!("Failed to determine return type for function '{}()'", fn_name);
          return;
       };
-      let out_name = convert_type(&out_type).ts_type;
+      let out_name = convert_type(&out_type, true).ts_type;
 
       // Getting first argument
       let first_arg = self.sig.inputs.first().unwrap();
@@ -57,7 +57,7 @@ impl super::ToTypescript for syn::ItemFn {
       };
 
       //let arg_name = "arg_name";
-      let arg_type = convert_type(&patty.ty).ts_type;
+      let arg_type = convert_type(&patty.ty, false).ts_type;
 
       let arg = if let Pat::Wild(_) = *patty.pat {
          "".to_string()

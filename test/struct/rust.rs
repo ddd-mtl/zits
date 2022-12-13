@@ -34,5 +34,6 @@ struct PaginationResult<T> {
 pub struct ExportPieceInput {
     pub cell_id: CellId,
     pub piece_eh: EntryHashB64,
-    pub piece_type_name: String, 
+    pub piece_type_name: String,
+    pub maybe_name: Option<String>,
 }
