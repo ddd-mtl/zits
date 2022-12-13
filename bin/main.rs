@@ -10,17 +10,20 @@ struct Args {
     #[structopt(long, help = "Dry-run, prints to stdout", short = "d", long = "debug")]
     debug: bool,
 
-    // TODO: add "create-module" functionality (so generated types can be under a specified namespace like Rust.MyType)
-    // useModules: bool,
 
-    // TODO: add .gitignore (and other ignore files) parsing functinality
-    // Add this to Cargo.toml: gitignore = "1.0.7"
-    // use gitignore; TODO: add flag which can parse and apply .gitignore
-    // #[structopt(
-    //     long = "use-ignore-file",
-    //     help = "Optionally ignore files with a .gitignore (or similar file); for example: --use-ignore-file=.gitignore"
-    // )]
-    // use_ignore_file: Option<PathBuf>,
+    ///
+    #[structopt(
+    long = "no-imports",
+    help = "Do not add imports for holochain types in generated typescript files",
+    )]
+    no_imports: bool,
+
+    ///
+    #[structopt(
+    long = "no-proxy",
+    help = "Do not generated a ZomeProxy file",
+    )]
+    no_proxy: bool,
 
     /// Input file
     #[structopt(
@@ -44,5 +47,10 @@ struct Args {
 fn main() {
     let args: Args = Args::from_args();
 
-    zits::generate_typescript_bindings(args.input, args.output, args.debug);
+    zits::generate_typescript_bindings(
+        args.input,
+        args.output,
+        args.debug,
+        !args.no_imports,
+        !args.no_proxy);
 }

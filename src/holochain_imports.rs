@@ -1,5 +1,5 @@
 
-/// from @Holochain/client
+/// from @Holochain/client v0.9.3
 pub const HOLOCHAIN_CLIENT_IMPORTS: &str = "
 import {
 // Types
@@ -47,7 +47,6 @@ CounterSigningSessionData,
 PreflightRequest,
 CounterSigningSessionTimes,
 ActionBase,
-ActionBase,
 CounterSigningAgents,
 PreflightBytes,
 Role,
@@ -72,7 +71,7 @@ RecordEntry,
 ";
 
 
-/// from @Holochain-open-dev/core-types
+/// from @Holochain-open-dev/core-types v0.6.1
 pub const HOD_CORE_TYPES_IMPORTS: &str = "
 import {
 // Common

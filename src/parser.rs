@@ -8,14 +8,26 @@ use crate::utils::has_zits_attribute;
 
 ///
 pub struct ParseState {
+   pub config: GenConfig,
    pub unprocessed_files: Vec<PathBuf>,
    pub type_defs_output: String,
    pub zome_proxy_output: String,
-   pub config: GenConfig,
+   pub new_types: Vec<String>,
 }
 
 
 impl ParseState {
+
+
+   pub fn new(config: GenConfig) -> Self {
+      Self {
+         config,
+         unprocessed_files: Vec::<PathBuf>::new(),
+         type_defs_output: String::new(),
+         zome_proxy_output: String::new(),
+         new_types: Vec::new(),
+      }
+   }
 
    ///
    fn parse_item<T: ToTypescript>(&mut self, item: T) {
@@ -29,6 +41,7 @@ impl ParseState {
       if self.config.can_debug {
          println!("[zits][debug] Encountered {} \"{}\"", item.kind(), item.ident().to_string());
       }
+      self.new_types.push(item.ident().to_string());
       item.convert_to_ts(self, self.config.can_debug, self.config.uses_typeinterface);
    }
 
