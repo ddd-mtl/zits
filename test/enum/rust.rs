@@ -96,7 +96,7 @@ pub enum PlaysetEntry {
 
 
 #[derive(Serialize, Deserialize, SerializedBytes, Debug)]
-#[serde(tag = "type", content = "content")]
+#[serde(tag = "type")]
 pub enum Message {
     Ping(AgentPubKeyB64),
     Pong(AgentPubKeyB64),
@@ -109,4 +109,13 @@ pub enum Message {
     NewTemplate(EntryHashB64),
     NewSvgMarker(EntryHashB64),
     NewEmojiGroup(EntryHashB64),
+}
+
+
+#[serde(tag = "bob", content = "marley")]
+pub enum FakeMessage {
+    Ping(AgentPubKeyB64),
+    Pong(AgentPubKeyB64),
+    NewHere(HereOutput),
+    DeleteHere((EntryHashB64, ActionHashB64)),
 }
