@@ -4,12 +4,11 @@ use structopt::StructOpt;
 const DESCRIPTION: &'static str = env!("CARGO_PKG_DESCRIPTION");
 
 #[derive(Debug, StructOpt, Clone)]
-#[structopt(about = DESCRIPTION, after_help = "This command helps generate type information for other languages. Currently, only typescript is supported.")]
+#[structopt(about = DESCRIPTION, after_help = "This command helps generate bindings for typescript.")]
 struct Args {
     /// Activate debug mode
     #[structopt(long, help = "Dry-run, prints to stdout", short = "d", long = "debug")]
     debug: bool,
-
 
     ///
     #[structopt(
@@ -24,6 +23,13 @@ struct Args {
     help = "Do not generate ZomeProxy",
     )]
     no_proxy: bool,
+
+    /// zome-name
+    #[structopt(
+    long = "--default-zome-name",
+    help = "Set the DEFAULT_ZOME_NAME for the gengerated proxy. Default is output's filename.",
+    )]
+    zome_name: Option<String>,
 
     /// Input file
     #[structopt(
@@ -46,11 +52,10 @@ struct Args {
 
 fn main() {
     let args: Args = Args::from_args();
-
     zits::generate_typescript_bindings(
         args.input,
         args.output,
         args.debug,
         !args.no_imports,
-        !args.no_proxy);
+        !args.no_proxy, args.zome_name);
 }

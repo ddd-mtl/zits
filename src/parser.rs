@@ -111,7 +111,7 @@ impl ParseState {
 
 
    ///
-   pub fn write_zome_proxy_header(&mut self, zome_name: &str) {
+   pub fn write_zome_proxy_header(&mut self, zome_name: &str, default_zome_name: &str) {
       self.zome_proxy_output.push_str(&format!("{}\n", MAGIC_FIRST_LINE));
       if self.config.can_hc_imports {
          self.zome_proxy_output.push_str(HOLOCHAIN_CLIENT_IMPORTS);
@@ -124,10 +124,9 @@ import {{ZomeProxy}} from '@ddd-qc/lit-happ';
 /**
  *
  */
-export class {zome_name}Proxy extends ZomeProxy {{
-  static readonly DEFAULT_ZOME_NAME = \"z{zome_name}\"
- "
-                                   , zome_name = zome_name.to_case(Case::Pascal)
+export class {}Proxy extends ZomeProxy {{
+  static readonly DEFAULT_ZOME_NAME = \"{}\"
+ ", zome_name.to_case(Case::Pascal), default_zome_name
       ));
    }
 

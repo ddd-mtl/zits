@@ -33,6 +33,7 @@ pub fn generate_typescript_bindings(
     can_debug: bool,
     can_hc_imports: bool,
     can_proxy: bool,
+    maybe_default_zome_name: Option<String>,
 ) {
     let uses_typeinterface = output
        .as_os_str()
@@ -52,11 +53,15 @@ pub fn generate_typescript_bindings(
 
     let file_name = output.file_stem().unwrap().to_str().unwrap();
     let zome_name: &str = file_name.split(".").collect::<Vec<&str>>()[0];
-
+    let default_zome_name: String = if let Some(dzn) = maybe_default_zome_name {
+        dzn
+    } else {
+        zome_name.to_string()
+    };
 
     if !can_debug {
         state.write_type_defs_header();
-        if can_proxy { state.write_zome_proxy_header(&zome_name); }
+        if can_proxy { state.write_zome_proxy_header(&zome_name, &default_zome_name); }
     }
 
 
@@ -121,19 +126,19 @@ pub fn generate_typescript_bindings(
         println!("Debug mode try run output");
         println!("======================================");
         //println!("======================================");
-        println!("TYPE DEFS FILE for {}", zome_name);
+        println!("TYPE DEFS FILE for \"{}\"", zome_name);
         println!("======================================");
         println!("{}", state.type_defs_output);
         println!("======================================");
         if can_proxy {
-            println!("ZomeProxy FILE for {}", zome_name);
+            println!("ZomeProxy FILE for \"{}\"", zome_name);
             println!("======================================");
             println!("{}", state.zome_proxy_output);
             println!("======================================");
         }
     } else {
         println!("======================================");
-        println!("Bindings generated for {}", zome_name);
+        println!("Bindings generated for \"{}\"", zome_name);
         println!("======================================");
         println!("{:?}", state.new_types);
 

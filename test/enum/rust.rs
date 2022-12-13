@@ -116,6 +116,14 @@ pub enum Message {
 pub enum FakeMessage {
     Ping(AgentPubKeyB64),
     Pong(AgentPubKeyB64),
-    NewHere(HereOutput),
+    NewHere,
     DeleteHere((EntryHashB64, ActionHashB64)),
+}
+
+
+#[serde(rename_all = "camelCase")]
+pub enum MembraneThreshold {
+    CreateEntryCount(CreateEntryCountThreshold),
+    Vouch(VouchThreshold),
+    Progenitor,
 }

@@ -27,15 +27,15 @@ impl super::ToTypescript for syn::ItemEnum {
             if let Fields::Unnamed(_) = x.fields { return true; }
             return false;
         });
-        let have_all_unnamed = !self.variants.iter().any(|x| {
-            if let Fields::Unnamed(_) = x.fields { return false; }
-            return true;
-        });
 
-        if have_one_unnamed && !have_all_unnamed {
-            println!("[zits][warn] Failed for mixte enum {}", self.ident.to_string());
-            return;
-        }
+        // let have_all_unnamed = !self.variants.iter().any(|x| {
+        //     if let Fields::Unnamed(_) = x.fields { return false; }
+        //     return true;
+        // });
+        // if have_one_unnamed && !have_all_unnamed {
+        //     println!("[zits][warn] Failed for mixte enum {}", self.ident.to_string());
+        //     return;
+        // }
 
 
         state.type_defs_output.push('\n');
@@ -58,7 +58,7 @@ impl super::ToTypescript for syn::ItemEnum {
         }
 
 
-        if have_all_unnamed {
+        if /* have_all_unnamed */ have_one_unnamed {
             make_unnamed_string_enum(self.clone(), state/*, casing*/);
             if let Some(tag_name) = utils::get_attribute_arg("serde", "tag", &self.attrs) {
                 let content_name = utils::get_attribute_arg("serde", "content", &self.attrs)
@@ -336,16 +336,17 @@ fn make_unnamed_enum(exported_enum: syn::ItemEnum, state: &mut ParseState) {
     for variant in exported_enum.variants {
         let variant_name = variant.ident.to_string();
         let variant_type_name = format!("{}Variant{}", enum_name, variant_name.to_case(Case::Pascal));
-        let variant_type = get_segment_ident(variant.fields, &enum_name);
-        if variant_type.is_err() {
+        let maybe_variant_type = get_segment_ident(variant.fields, &enum_name);
+        if let Err(e) = maybe_variant_type {
+            eprintln!("{}", e);
             succeeded = false;
             break;
         }
         variant_types.push(variant_type_name.clone());
         temp.push_str(&format!("export type {variant_type_name} = {{{variant_name}: {variant_type}}}\n",
-                                                 variant_type_name = variant_type_name,
-                                                 variant_name = variant_name.to_case(Case::Camel),
-                                                 variant_type = variant_type.unwrap(),
+                               variant_type_name = variant_type_name,
+                               variant_name = variant_name.to_case(Case::Camel),
+                               variant_type = maybe_variant_type.unwrap(),
         ));
     }
     ///
@@ -365,6 +366,11 @@ fn make_unnamed_enum(exported_enum: syn::ItemEnum, state: &mut ParseState) {
 
 ///
 fn get_segment_ident(fields: Fields, enum_name: &str) -> Result<String, String> {
+
+    if let Fields::Unit = fields {
+        return Ok("null".to_string());
+    }
+
     let Fields::Unnamed(fields) = fields else {
         return Err(format!("[zits][error] variant is not unnamed in enum {}", enum_name));
     };
