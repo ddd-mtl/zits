@@ -25,7 +25,7 @@ impl super::ToTypescript for syn::ItemEnum {
         });
 
         if have_one_unnamed && !have_all_unnamed {
-            println!("[ztsync] Failed for mixte enum {}", self.ident.to_string());
+            println!("[zits][warn] Failed for mixte enum {}", self.ident.to_string());
             return;
         }
 
