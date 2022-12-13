@@ -48,7 +48,7 @@ zits -i directory1 -i directory2 -o types.d.ts
 
 ## Multiple Outputs
 
-It might help to create multiple typing files for your project. It's easy, just call tsync multiple times:
+It might help to create multiple typing files for your project. It's easy, just call zits multiple times:
 
 ```sh
 zits -i src/models -o models.d.ts

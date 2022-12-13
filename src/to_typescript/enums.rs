@@ -150,7 +150,6 @@ fn make_numeric_enum(
 /// ```ignore
 /// #[derive(Serialize, Deserialize)]
 /// #[serde(tag = "type")]
-/// #[tsync]
 /// enum Message {
 ///     Request { id: String, method: String, params: Params },
 ///     Response { id: String, result: Value },

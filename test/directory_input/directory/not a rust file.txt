@@ -1,9 +1,8 @@
 /// This file shouldn't be parsed because it isn't a rust file...
 
-use tsync::tsync;
 
 /// Doc comments are preserved too!
-#[tsync]
+#[serde]
 struct ErrorThisShouldNotBeInTheGeneratedFile {
     error: String,
 }
