@@ -17,7 +17,7 @@ Or by building the source-code locally:
 
 ```
 git clone https://github.com/ddd-mtl/zome-tsync.git
-cd zits
+cd zome-tsync
 cargo install --path ./
 ```
 
@@ -35,7 +35,7 @@ zits -i ./zomes/profiles -i ./zomes/profiles_integrity -o ./bindings/profiles.d.
 Typescript bindings will be generated for all types, structs, enums, marked with holochain or serde specific attributes. (`#[hdk_entry_helper]`, `#[hdk_entry_defs]`, etc).
 The serde `rename_all` attribute argument is supported.
 
-A `ZomeProxy` subclass for [cell-proxy](https://npmjs.org/ddd-qc/cell-proxy) will be generated in its own file. It will have a method for each function marked with `[hdk_extern]`, excluding the holochain callbacks like `init()` or `validate()`. It will be named after the filename given as output. The file will also have the same name with `.proxy.ts` as extension.
+A `ZomeProxy` subclass for [cell-proxy](https://npmjs.org/@ddd-qc/cell-proxy) will be generated in its own file. It will have a method for each function marked with `[hdk_extern]`, excluding the holochain callbacks like `init()` or `validate()`. It will be named after the filename given as output. The file will also have the same name with `.proxy.ts` as extension.
 
 
 ## Multiple Inputs
