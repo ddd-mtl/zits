@@ -2,12 +2,13 @@
 name = "zits"
 description = "Generate typescript bindings for zome code in Rust"
 version = "1.0.0"
+edition = "2021"
+rust-version = "1.65.0"
+repository = "https://github.com/ddd-mtl/zits/"
 readme = "README.md"
 license = "MIT OR Apache-2.0"
 keywords = ["typescript", "types", "generation", "holochain"]
 categories = ["command-line-utilities", "development-tools", "development-tools::ffi"]
-edition = "2021"
-rust-version = "1.65.0"
 
 [dependencies]
 structopt = "0.3.22"
