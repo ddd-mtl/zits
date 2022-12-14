@@ -1,6 +1,6 @@
 # zits
 
-<a href="https://crates.io/crates/zits"><img src="https://img.shields.io/crates/v/zsync.svg?style=for-the-badge" height="20" alt="License: MIT OR Apache-2.0" /></a>
+<a href="https://crates.io/crates/zits"><img src="https://img.shields.io/crates/v/zits.svg?style=for-the-badge" height="20" alt="License: MIT OR Apache-2.0" /></a>
 
 **Compatible with:**
  - **HDK v0.0.154** & **HDI v0.1.3**
