@@ -188,7 +188,7 @@ pub enum Message {
 ```
 
 Output:
-```ts
+```javascript
 export enum MessageType {
 	Ping = 'Ping',
 	Pong = 'Pong',
