@@ -128,32 +128,83 @@ Support added for types defined in `@holochain/client` and `@holochain-open-dev/
 Support has been added for functions, but only the first argument is considered since as this is a limitation of zome functions. Support includes the following:
  - `ExternResult<T>` converts to `Promise<T>`
  - `BTreeMap<T>` converts to `Dictionary<T>`
- - `Option<T>` converts to `T | null`
+ - `Option<T>` converts to `T | null` when its a function return type
  - A destructured argument will be converted to `input`
 
- Additionnaly support for enums of unnamed variants has been added and converts to a string enum.
+ Additionnaly support for enums of unnamed variants has been added and converts to a string enum and a ORed type.
+
  ### Example
+
+ #### unnamed variants
  Input:
 ```rust
 #[hdk_entry_defs]
 pub enum PlaysetEntry {
-    SvgMarker(SvgMarkerEntry),
-    EmojiGroup(EmojiGroupEntry),
-    Template(TemplateEntry),
-    Space(SpaceEntry),
+    SvgMarker(SvgMarker),
+    EmojiGroup(EmojiGroup),
+    Template(Template),
+    Space,
 }
 ```
 
 Output:
 ```ts
-export enum PlaysetEntry {
+export enum PlaysetEntryType {
 	SvgMarker = 'SvgMarker',
 	EmojiGroup = 'EmojiGroup',
 	Template = 'Template',
 	Space = 'Space',
 }
+
+export type PlaysetEntryVariantSvgMarker = {svgMarker: SvgMarker}
+export type PlaysetEntryVariantEmojiGroup = {emojiGroup: EmojiGroup}
+export type PlaysetEntryVariantTemplate = {template: Template}
+export type PlaysetEntryVariantSpace = {space: null}
+export type PlaysetEntry = 
+ | PlaysetEntryVariantSvgMarker | PlaysetEntryVariantEmojiGroup | PlaysetEntryVariantTemplate | PlaysetEntryVariantSpace;
+
 ```
 
+ #### tagged unnamed variants
+
+ Serde's tag and content attributes are considered for enums. When provided, type declarations for each variant is omitted.
+
+ Input:
+```rust
+#[serde(tag = "type", content = "content")]
+pub enum Message {
+    Ping(AgentPubKeyB64),
+    Pong(AgentPubKeyB64),
+    NewHere(HereOutput),
+    DeleteHere((EntryHashB64, ActionHashB64)), /// sessionEh, hereLinkHh
+    UpdateHere((u32, ActionHashB64, Here)),    ///[index, newLinkAh, newHereEntry]}
+    NewSession((EntryHashB64, PlacementSession)),
+    /// - with entry hash of entries
+    NewSpace(EntryHashB64),
+    NewTemplate(EntryHashB64),
+    NewSvgMarker(EntryHashB64),
+    NewEmojiGroup(EntryHashB64),
+}
+```
+
+Output:
+```ts
+export enum MessageType {
+	Ping = 'Ping',
+	Pong = 'Pong',
+	NewHere = 'NewHere',
+	DeleteHere = 'DeleteHere',
+	UpdateHere = 'UpdateHere',
+}
+export type Message = 
+ | {type: "Ping", content: AgentPubKeyB64}
+ | {type: "Pong", content: AgentPubKeyB64}
+ | {type: "NewHere", content: HereOutput}
+ | {type: "DeleteHere", content: [EntryHashB64, ActionHashB64, ]}
+ | {type: "UpdateHere", content: [number, ActionHashB64, Here, ]}
+
+
+```
 
 # Development/Testing
 
