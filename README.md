@@ -36,7 +36,7 @@ cargo install --path ./
 Use the CLI tool on the folders of your zome code:
 
 ```sh
-zits -i ./zomes/profiles -i ./zomes/profiles_integrity -o ./bindings/profiles.d.ts
+zits -i ./zomes/profiles -i ./zomes/profiles_integrity -o ./bindings/profiles.ts
 ```
 
 Typescript bindings will be generated for all types, structs, enums, marked with holochain or serde specific attributes. (`#[hdk_entry_helper]`, `#[hdk_entry_defs]`, etc).
@@ -50,7 +50,7 @@ A `ZomeProxy` subclass for [cell-proxy](https://npmjs.org/@ddd-qc/cell-proxy) wi
 You can specify many inputs (directories and/or files) using the `-i` flag multiple times, like so:
 
 ```sh
-zits -i directory1 -i directory2 -o types.d.ts
+zits -i directory1 -i directory2 -o types.ts
 ```
 
 ## Multiple Outputs
@@ -58,8 +58,8 @@ zits -i directory1 -i directory2 -o types.d.ts
 It might help to create multiple typing files for your project. It's easy, just call zits multiple times:
 
 ```sh
-zits -i src/models -o models.d.ts
-zits -i src/api -o api.d.ts
+zits -i src/models -o models.ts
+zits -i src/api -o api.ts
 ```
 
 # Usage as a library
@@ -83,7 +83,7 @@ In the case that installing the `zits` CLI isn't an option, you can use it as a 
    let dir = env!("CARGO_MANIFEST_DIR");
    
        let inputs = vec![PathBuf::from_iter([dir, "backend"])];
-       let output = PathBuf::from_iter([dir, "frontend/src/types/rust.d.ts"]);
+       let output = PathBuf::from_iter([dir, "frontend/src/types/rust.ts"]);
    
        zits::generate_typescript_defs(inputs, output, false);
    }
@@ -175,7 +175,7 @@ pub enum PlaysetEntry {
 ```
 
 Output:
-```ts
+```javascript
 export enum PlaysetEntryType {
 	SvgMarker = 'SvgMarker',
 	EmojiGroup = 'EmojiGroup',
