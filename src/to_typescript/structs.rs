@@ -29,14 +29,14 @@ impl super::ToTypescript for syn::ItemStruct {
         /// Handle new-type
         if let syn::Fields::Unnamed(unnameds) = self.fields {
             if unnameds.unnamed.is_empty() {
-                eprintln!("Empty new type. Skipping");
+                eprintln!("Empty new type. Skipping.");
                 return;
             }
             if unnameds.unnamed.len() > 1 {
-                eprintln!("Tuple new type not handled. Skipping");
+                eprintln!("Tuple new type not handled. Skipping.");
                 return;
             }
-            println!("\n process_new_type(): {:?}", unnameds);
+            //println!("\n process_new_type(): {:?}", unnameds);
             /// Write new-type
             let field_type = convert_type(&unnameds.unnamed[0].ty, false);
             let mut field_type_str = field_type.ts_type;

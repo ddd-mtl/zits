@@ -48,4 +48,4 @@ pub struct FindManifestOutput(FileManifest);
 pub struct FindOutput(pub Option<u32>);
 
 #[serde]
-pub struct GetMailOutput(pub Option<Result<InMail, OutMail>>);
+pub struct GetMailOutput(pub Option<Result<u32, String>>);

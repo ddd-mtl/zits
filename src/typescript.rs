@@ -16,7 +16,7 @@ impl From<String> for TsType {
 }
 
 fn convert_generic(gen_ty: &syn::GenericArgument, is_return_type: bool) -> TsType {
-    println!("convert_generic(): {:?}", gen_ty);
+    //println!("convert_generic(): {:?}", gen_ty);
     match gen_ty {
         syn::GenericArgument::Type(ty) => convert_type(ty, is_return_type),
         _ => "unknown".to_string().into(),

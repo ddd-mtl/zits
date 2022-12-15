@@ -147,7 +147,7 @@ pub fn generate_typescript_bindings(
         let count_enum = state.converted_items["enum"].len();
         let count_fn = state.converted_items["fn"].len();
 
-        println!("All Items found: {}", count_const + count_type + count_struct + count_enum + count_fn);
+        println!("Total Items found: {}", count_const + count_type + count_struct + count_enum + count_fn);
         if count_const > 0 {println!("  -  const: {}", count_const)}
         if count_type > 0 {println!("  -   type: {}", count_type)}
         if count_struct > 0 {println!("  - struct: {}", count_struct)}

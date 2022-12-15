@@ -116,26 +116,53 @@ A list of files which can't be opened or parsed successfully are listed after ex
 
 # Docs
 
-See `zits --help` for more information.
+See `zits --help` for more information on parameters, options & flags.
 
 
-## Supported Conversions & Examples
+# Supported Conversions & Examples
 
 `zits` is a fork of [tsync](https://github.com/wulf/tsync). See its documentations for details on how conversions works.
 
 Support added for types defined in `@holochain/client` and `@holochain-open-dev/core-types`.
 
-Support has been added for functions, but only the first argument is considered since as this is a limitation of zome functions. Support includes the following:
- - `ExternResult<T>` converts to `Promise<T>`
- - `BTreeMap<T>` converts to `Dictionary<T>`
- - `Option<T>` converts to `T | null` when its a function return type
- - A destructured argument will be converted to `input`
 
+## Types
+
+Support includes, but is not limited to, the following "base" types:
+- `ExternResult<T>` converts to `Promise<T>`
+- `BTreeMap<T>` converts to `Dictionary<T>`
+- `Result<A, B>` converts to `A | B`
+- `X25519PubKey` converts to `Uint8Array`
+
+
+## Functions
+Support has been added for functions, but only the first argument is considered since as this is a limitation of zome functions. 
+- `Option<T>` converts to `T | null` when it's a function return type
+- A destructured argument will be converted to `input`
+
+
+## Structs
+
+Added support for non-tuple newtypes.
+
+### Example
+
+Input:
+```rust
+#[serde]
+pub struct GetMailOutput(pub Option<Result<u32, String>>);
+```
+Output:
+```javascript
+export type GetMailOutput = number | string | null;
+```
+
+## Enums
  Additionnaly support for enums of unnamed variants has been added and converts to a string enum and a ORed type.
 
- ### Example
+### Example
 
- #### unnamed variants
+#### unnamed variants
  Input:
 ```rust
 #[hdk_entry_defs]
@@ -165,7 +192,7 @@ export type PlaysetEntry =
 
 ```
 
- #### tagged unnamed variants
+#### tagged unnamed variants
 
  Serde's tag and content attributes are considered for enums. When provided, type declarations for each variant is omitted.
 

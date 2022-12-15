@@ -273,7 +273,7 @@ fn make_externally_tagged_variant_enum(
 
 ///
 fn make_unnamed_string_enum(exported_enum: syn::ItemEnum, state: &mut ParseState) {
-    println!("[zits][debug] Making unnamed string enum {}", exported_enum.ident.to_string());
+    println!("[zits][debug] Making unnamed string enum \"{}\"", exported_enum.ident.to_string());
 
     state.type_defs_output.push_str(&format!("export enum {}Type {{\n", exported_enum.ident.to_string()));
 
@@ -289,7 +289,7 @@ fn make_unnamed_string_enum(exported_enum: syn::ItemEnum, state: &mut ParseState
 ///
 fn make_tagged_unnamed_enum(tag_name: &str, content_name: &str, exported_enum: syn::ItemEnum, state: &mut ParseState) {
     let enum_name = exported_enum.ident.to_string();
-    println!("[zits][debug] Making tagged unnamed enum {}", enum_name);
+    println!("[zits][debug] Making tagged unnamed enum \"{}\"", enum_name);
 
     let mut succeeded = true;
     /// write each enum variant as type
@@ -326,7 +326,7 @@ fn make_tagged_unnamed_enum(tag_name: &str, content_name: &str, exported_enum: s
 ///
 fn make_unnamed_enum(exported_enum: syn::ItemEnum, state: &mut ParseState) {
     let enum_name = exported_enum.ident.to_string();
-    println!("[zits][debug] Making unnamed enum {}", enum_name);
+    println!("[zits][debug] Making unnamed enum \"{}\"", enum_name);
 
     let mut temp = String::new();
     let mut succeeded = true;
@@ -371,7 +371,7 @@ fn get_segment_ident(fields: Fields, enum_name: &str) -> Result<String, String> 
     }
 
     let Fields::Unnamed(fields) = fields else {
-        return Err(format!("[zits][error] variant is not unnamed in enum {}", enum_name));
+        return Err(format!("[zits][error] variant is not unnamed in enum \"{}\"", enum_name));
     };
     if fields.unnamed.len() != 1 {
         return Err(format!("[zits][error] unnamed variant does not have one field {:?}", fields.unnamed));
