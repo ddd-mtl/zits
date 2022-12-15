@@ -3,7 +3,7 @@ use syn::{Attribute, NestedMeta, __private::ToTokens};
 
 
 ///
-pub fn write_comments(target_str: &mut String, comments: &Vec<String>, indentation_amount: i8) {
+pub fn write_comments(target_str: &mut String, comments: &[String], indentation_amount: i8) {
     let indentation = build_indentation(indentation_amount);
     match comments.len() {
         0 => (),
@@ -19,20 +19,41 @@ pub fn write_comments(target_str: &mut String, comments: &Vec<String>, indentati
 }
 
 
+const ZITS_NEEDLES: &[&str] = &[
+    "hdk_entry_helper",
+    "hdk_extern",
+    "hdk_entry_defs",
+    "serde",
+];
+
+
 ///
-pub fn has_zits_attribute(attributes: &Vec<syn::Attribute>) -> bool {
-    //println!("has_zits_attribute(): {:?}", attributes);
-    return has_attribute("hdk_entry_helper", attributes)
-       || has_attribute("hdk_extern", attributes)
-       //|| has_attribute("unit_enum", attributes)
-       || has_attribute("hdk_entry_defs", attributes)
-       || has_attribute("serde", attributes)
-       || has_attribute_arg("derive", "Serialize", &attributes)
+pub fn has_zits_attribute(attributes: &[syn::Attribute]) -> bool {
+    let has_attr = attributes
+       .iter()
+       .any(|attr| {
+        attr.path.segments
+            .iter()
+            .any(|segment| ZITS_NEEDLES.contains(&segment.ident.to_string().as_str()))
+    });
+    return has_attr
+       || has_attribute_arg("derive", "Serialize", attributes)
 }
 
+// // ///
+// pub fn has_zits_attribute(attributes: &[syn::Attribute]) -> bool {
+//     //println!("has_zits_attribute(): {:?}", attributes);
+//     return has_attribute("hdk_entry_helper", attributes)
+//        || has_attribute("hdk_extern", attributes)
+//        //|| has_attribute("unit_enum", attributes)
+//        || has_attribute("hdk_entry_defs", attributes)
+//        || has_attribute("serde", attributes)
+//        || has_attribute_arg("derive", "Serialize", &attributes)
+// }
+
 
 ///
-pub fn has_derive_attribute(needle: &str, attributes: &Vec<syn::Attribute>) -> bool {
+pub fn has_derive_attribute(needle: &str, attributes: &[syn::Attribute]) -> bool {
     attributes.iter().any(|attr| {
         attr.path
             .segments
@@ -43,7 +64,7 @@ pub fn has_derive_attribute(needle: &str, attributes: &Vec<syn::Attribute>) -> b
 
 
 ///
-pub fn has_attribute(needle: &str, attributes: &Vec<syn::Attribute>) -> bool {
+pub fn has_attribute(needle: &str, attributes: &[syn::Attribute]) -> bool {
     attributes.iter().any(|attr| {
         attr.path
             .segments
@@ -57,7 +78,7 @@ pub fn has_attribute(needle: &str, attributes: &Vec<syn::Attribute>) -> bool {
 pub fn get_attribute_arg(
     needle: &str,
     arg: &str,
-    attributes: &Vec<syn::Attribute>,
+    attributes: &[syn::Attribute],
 ) -> Option<String> {
     if let Some(attr) = get_attribute(needle, attributes) {
         // check if attribute list contains the argument we are interested in
@@ -88,7 +109,7 @@ pub fn get_attribute_arg(
 
 
 /// Check has an attribute arg.
-pub fn has_attribute_arg(needle: &str, arg: &str, attributes: &Vec<syn::Attribute>) -> bool {
+pub fn has_attribute_arg(needle: &str, arg: &str, attributes: &[syn::Attribute]) -> bool {
     if let Some(attr) = get_attribute(needle, attributes) {
         // check if attribute list contains the argument we are interested in
         if let Ok(syn::Meta::List(args)) = attr.parse_meta() {
@@ -111,12 +132,12 @@ pub fn has_attribute_arg(needle: &str, arg: &str, attributes: &Vec<syn::Attribut
 
 
 /// Get the doc string comments from the syn::attributes
-pub fn get_comments(attributes: Vec<syn::Attribute>) -> Vec<String> {
+pub fn get_comments(attributes: &[syn::Attribute]) -> Vec<String> {
     let mut comments: Vec<String> = vec![];
 
-    for attribute in attributes {
+    for attribute in attributes.iter() {
         let mut is_doc = false;
-        for segment in attribute.path.segments {
+        for segment in attribute.path.segments.iter() {
             if segment.ident.to_string() == "doc" {
                 is_doc = true;
                 break;
@@ -124,7 +145,7 @@ pub fn get_comments(attributes: Vec<syn::Attribute>) -> Vec<String> {
         }
 
         if is_doc {
-            for token in attribute.tokens {
+            for token in attribute.tokens.clone().into_iter() {
                 match token {
                     syn::__private::quote::__private::TokenTree::Literal(comment) => {
                         let comment = comment.to_string();
@@ -166,7 +187,7 @@ pub fn extract_struct_generics(s: syn::Generics) -> String {
 }
 
 /// Get the attribute matching needle name.
-pub fn get_attribute(needle: &str, attributes: &Vec<syn::Attribute>) -> Option<Attribute> {
+pub fn get_attribute(needle: &str, attributes: &[syn::Attribute]) -> Option<Attribute> {
     // if multiple attributes pass the conditions
     // we still want to return the last
     for attr in attributes.iter().rev() {

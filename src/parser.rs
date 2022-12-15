@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::fs::File;
 use std::io::Read;
 use std::path::PathBuf;
@@ -14,7 +15,8 @@ pub struct ParseState {
    pub unprocessed_files: Vec<PathBuf>,
    pub type_defs_output: String,
    pub zome_proxy_output: String,
-   pub new_types: Vec<String>,
+   /// item_kind -> item_ident[]
+   pub converted_items: HashMap<&'static str, Vec<String>>,
 }
 
 
@@ -22,17 +24,25 @@ impl ParseState {
 
 
    pub fn new(config: GenConfig) -> Self {
+      let mut converted_items = HashMap::new();
+      converted_items.insert("const", Vec::<String>::new());
+      converted_items.insert("fn", Vec::<String>::new());
+      converted_items.insert("struct", Vec::<String>::new());
+      converted_items.insert("enum", Vec::<String>::new());
+      converted_items.insert("type", Vec::<String>::new());
+
       Self {
          config,
          unprocessed_files: Vec::<PathBuf>::new(),
          type_defs_output: String::new(),
          zome_proxy_output: String::new(),
-         new_types: Vec::new(),
+         converted_items,
       }
    }
 
    ///
    fn parse_item<T: ToTypescript>(&mut self, item: T) {
+      /// Must have a zits attributes
       let has_zits_attribute = has_zits_attribute(&item.attrs());
       if !has_zits_attribute {
          if self.config.can_debug {
@@ -40,10 +50,15 @@ impl ParseState {
          }
          return;
       }
+      /// Store item
       if self.config.can_debug {
          println!("[zits][debug] Encountered {} \"{}\"", item.kind(), item.ident().to_string());
       }
-      if item.kind() != "fn" {self.new_types.push(item.ident().to_string());}
+      // TODO: ugly copy
+      let mut new_vec = self.converted_items[item.kind()].clone();
+      new_vec.push(item.ident().to_string());
+      self.converted_items.insert(item.kind(), new_vec);
+      /// Parse item
       item.convert_to_ts(self, self.config.can_debug, self.config.uses_typeinterface);
    }
 
@@ -99,14 +114,19 @@ impl ParseState {
 
 
    pub fn write_type_defs_import(&mut self, zome_name: &str) {
-      let mut types = String::new();
-      for new_type in self.new_types.iter() {
-         types.push_str(&new_type);
-         types.push_str(", ");
+      let mut all_types = String::new();
+      for (kind, types) in self.converted_items.iter() {
+         if *kind == "fn" {
+            continue;
+         }
+         for new_type in types.iter() {
+            all_types.push_str(&new_type);
+            all_types.push_str(", ");
+         }
       }
       self.zome_proxy_output.insert_str(
          MAGIC_FIRST_LINE.len() + 1,
-         &format!("\nimport {{{}}} from './{}';", types, zome_name));
+         &format!("\nimport {{{}}} from './{}';", all_types, zome_name));
    }
 
 

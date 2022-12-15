@@ -47,7 +47,7 @@ impl super::ToTypescript for syn::ItemConst {
         match body {
             Some(body) => {
                 state.type_defs_output.push_str("\n");
-                let comments = get_comments(self.attrs.to_owned());
+                let comments = get_comments(&self.attrs);
                 write_comments(&mut state.type_defs_output, &comments, 0);
                 state
                     .type_defs_output

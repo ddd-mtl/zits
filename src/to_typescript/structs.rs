@@ -15,7 +15,7 @@ impl super::ToTypescript for syn::ItemStruct {
     fn convert_to_ts(self, state: &mut ParseState, _debug: bool, _uses_typeinterface: bool) {
         state.type_defs_output.push('\n');
 
-        let comments = utils::get_comments(self.clone().attrs);
+        let comments = utils::get_comments(&self.attrs);
         write_comments(&mut state.type_defs_output, &comments, 0);
 
         //let casing = utils::get_attribute_arg("serde", "renameAll", &self.attrs);
@@ -40,19 +40,25 @@ impl super::ToTypescript for syn::ItemStruct {
     }
 }
 
+
+///
 pub fn process_fields(fields: syn::Fields, state: &mut ParseState, indentation_amount: i8, casing: Option<Case>) {
     //println!("\n process_fields(): {:?}", casing);
     let space = utils::build_indentation(indentation_amount);
     for field in fields {
-        let comments = utils::get_comments(field.attrs);
+        /// Write comments
+        let comments = utils::get_comments(&field.attrs);
         write_comments(&mut state.type_defs_output, &comments, 2);
-        //let field_name = field.ident.unwrap().to_string();
-        let field_name = if let Some(casing) = casing {
-            field.ident.unwrap().to_string().to_case(casing)
-        } else {
-            field.ident.unwrap().to_string()
+        /// Get field name
+        let mut field_name = field.ident.clone()
+           .expect(&format!("Field should have ident: {:?}", field))
+           .to_string();
+        if let Some(casing) = casing {
+            field_name = field_name.to_case(casing)
         };
+        /// Convert field type
         let field_type = convert_type(&field.ty, false);
+        /// Write field
         state.type_defs_output.push_str(&format!(
             "{space}{field_name}{optional_parameter_token}: {field_type}\n",
             space = space,

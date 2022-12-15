@@ -14,7 +14,7 @@ impl super::ToTypescript for syn::ItemType {
         state.type_defs_output.push_str("\n");
         let name = self.ident.to_string();
         let ty = convert_type(&self.ty, false);
-        let comments = get_comments(self.attrs);
+        let comments = get_comments(&self.attrs);
         write_comments(&mut state.type_defs_output, &comments, 0);
         state
             .type_defs_output

@@ -40,7 +40,7 @@ impl super::ToTypescript for syn::ItemEnum {
 
         state.type_defs_output.push('\n');
 
-        let comments = utils::get_comments(self.clone().attrs);
+        let comments = utils::get_comments(&self.attrs);
         let casing = get_serde_casing(&self.attrs);
 
 
@@ -208,7 +208,7 @@ fn make_variant_enum(
 
     for variant in exported_enum.variants {
         state.type_defs_output.push('\n');
-        let comments = utils::get_comments(variant.attrs);
+        let comments = utils::get_comments(&variant.attrs);
         write_comments(&mut state.type_defs_output, &comments, 2);
         let field_name = if let Some(casing) = casing {
             variant.ident.to_string().to_case(casing)
@@ -243,7 +243,7 @@ fn make_externally_tagged_variant_enum(
 
     for variant in exported_enum.variants {
         state.type_defs_output.push('\n');
-        let comments = utils::get_comments(variant.attrs);
+        let comments = utils::get_comments(&variant.attrs);
         write_comments(&mut state.type_defs_output, &comments, 2);
         let field_name = if let Some(casing) = casing {
             variant.ident.to_string().to_case(casing)
