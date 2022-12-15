@@ -74,7 +74,7 @@ impl super::ToTypescript for syn::ItemFn {
       ));
 
       state.zome_proxy_output.push_str(&format!(
-             "  \treturn this.call('{fn_name}', {arg_name});\n"
+             "    return this.call('{fn_name}', {arg_name});\n"
              , fn_name = fn_name
              , arg_name = arg_name.to_case(Case::Camel)
       ));

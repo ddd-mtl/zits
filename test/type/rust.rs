@@ -10,3 +10,7 @@ pub struct ImportPieceInput {
    pub piece_type_name: String, // FIXME use UnitEntryTypes and AppEntryTypeName
    pub piece_entry: Entry,
 }
+
+
+#[serde]
+type MyResult = Result<u32, String>;

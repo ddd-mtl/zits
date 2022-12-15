@@ -14,36 +14,56 @@ impl super::ToTypescript for syn::ItemStruct {
 
     fn convert_to_ts(self, state: &mut ParseState, _debug: bool, _uses_typeinterface: bool) {
         state.type_defs_output.push('\n');
-
+        /// write comments
         let comments = utils::get_comments(&self.attrs);
         write_comments(&mut state.type_defs_output, &comments, 0);
-
-        //let casing = utils::get_attribute_arg("serde", "renameAll", &self.attrs);
+        /// Name
         let casing = get_serde_casing(&self.attrs);
-
         let /*mut*/ name = self.clone().ident.to_string();
-
         // Dont rename because other types might refer to it
         // if has_attribute("hdk_entry_helper", &self.attrs) {
         //     name.push_str("Entry");
         // }
 
+
+        /// Handle new-type
+        if let syn::Fields::Unnamed(unnameds) = self.fields {
+            if unnameds.unnamed.is_empty() {
+                eprintln!("Empty new type. Skipping");
+                return;
+            }
+            if unnameds.unnamed.len() > 1 {
+                eprintln!("Tuple new type not handled. Skipping");
+                return;
+            }
+            println!("\n process_new_type(): {:?}", unnameds);
+            /// Write new-type
+            let field_type = convert_type(&unnameds.unnamed[0].ty, false);
+            let mut field_type_str = field_type.ts_type;
+            if field_type.is_optional {
+                field_type_str += " | null"
+            }
+            state.type_defs_output.push_str(&format!("export type {} = {};\n", name, field_type_str));
+            return;
+        }
+
+
+        /// Write normal struct
         state.type_defs_output.push_str(&format!(
             "export interface {}{} {{\n",
             name,
             utils::extract_struct_generics(self.generics.clone())
         ));
         process_fields(self.fields, state, 2, casing);
-        state.type_defs_output.push_str("}");
-
-        state.type_defs_output.push('\n');
+        /// Write normal struct end
+        state.type_defs_output.push_str("}\n");
     }
 }
 
 
 ///
 pub fn process_fields(fields: syn::Fields, state: &mut ParseState, indentation_amount: i8, casing: Option<Case>) {
-    //println!("\n process_fields(): {:?}", casing);
+    //println!("\n process_fields(): {:?}", fields);
     let space = utils::build_indentation(indentation_amount);
     for field in fields {
         /// Write comments

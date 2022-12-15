@@ -38,12 +38,14 @@ pub struct ExportPieceInput {
     pub maybe_name: Option<String>,
 }
 
-#[hdk_entry_helper]
-#[derive(Clone, PartialEq)]
-pub struct FileManifest {
-    pub data_hash: String,
-    pub filename: String,
-    pub filetype: String,
-    pub orig_filesize: usize,
-    pub chunks: Vec<EntryHash>,
-}
+
+/// NewTypes
+
+#[serde]
+pub struct FindManifestOutput(FileManifest);
+
+#[serde]
+pub struct FindOutput(pub Option<u32>);
+
+#[serde]
+pub struct GetMailOutput(pub Option<Result<InMail, OutMail>>);

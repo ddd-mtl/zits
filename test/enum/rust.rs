@@ -127,3 +127,17 @@ pub enum MembraneThreshold {
     Vouch(VouchThreshold),
     Progenitor,
 }
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, SerializedBytes)]
+pub enum DirectMessageProtocol {
+    Failure(String),
+    Success(String),
+    Mail(MailMessage),
+    Ack(AckMessage),
+    Chunk(FileChunk),
+    FileManifest(FileManifest),
+    RequestChunk(EntryHash),
+    RequestManifest(EntryHash),
+    UnknownEntry,
+    Ping,
+}

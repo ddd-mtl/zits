@@ -2,6 +2,7 @@
 pub struct TsType {
     pub ts_type: String,
     pub is_optional: bool,
+    pub is_result: bool,
 }
 
 impl From<String> for TsType {
@@ -9,12 +10,13 @@ impl From<String> for TsType {
         TsType {
             ts_type,
             is_optional: false,
+            is_result: false,
         }
     }
 }
 
 fn convert_generic(gen_ty: &syn::GenericArgument, is_return_type: bool) -> TsType {
-    //println!("convert_generic(): {:?}", gen_ty);
+    println!("convert_generic(): {:?}", gen_ty);
     match gen_ty {
         syn::GenericArgument::Type(ty) => convert_type(ty, is_return_type),
         _ => "unknown".to_string().into(),
@@ -49,6 +51,10 @@ pub fn convert_type(ty: &syn::Type, is_return_type: bool) -> TsType {
                 "char" => "string".to_string().into(),
                 "str" => "string".to_string().into(),
                 "String" => "string".to_string().into(),
+                // TODO: should be imported from holochain/client instead
+                "XSalsa20Poly1305EncryptedData" => "unknown".to_string().into(),
+                "X25519PubKey" => "Uint8Array".to_string().into(),
+                /// Date
                 "NaiveDateTime" => "Date".to_string().into(),
                 "DateTime" => "Date".to_string().into(),
                 //"()" => "void".to_string().into(),
@@ -59,14 +65,15 @@ pub fn convert_type(ty: &syn::Type, is_return_type: bool) -> TsType {
                     syn::PathArguments::AngleBracketed(anglebracketed_argument) => format!(
                         "Dictionary<{}>",
                         match convert_generic(anglebracketed_argument.args.first().unwrap(), is_return_type) {
-                            TsType{ is_optional: true, ts_type } => format!("{} | undefined", ts_type),
-                            TsType{ is_optional: false, ts_type } => ts_type
+                            TsType{ is_optional: true, is_result: _ ,ts_type } => format!("{} | undefined", ts_type),
+                            TsType{ is_optional: false, is_result: _ , ts_type } => ts_type
                         }
                     ),
                     _ => "unknown".to_string(),
                 }.into(),
                 "ExternResult" => TsType {
                     is_optional: true,
+                    is_result: false,
                     ts_type: match arguments {
                         syn::PathArguments::Parenthesized(parenthesized_argument) => {
                             format!("Promise<{:?}>", parenthesized_argument)
@@ -78,8 +85,26 @@ pub fn convert_type(ty: &syn::Type, is_return_type: bool) -> TsType {
                         _ => "unknown".to_string(),
                     },
                 },
+                "Result" => TsType {
+                    is_optional: false,
+                    is_result: true,
+                    ts_type: match arguments {
+                        syn::PathArguments::Parenthesized(parenthesized_argument) => {
+                            format!("{:?}", parenthesized_argument)
+                        }
+                        syn::PathArguments::AngleBracketed(anglebracketed_argument) => {
+                            let args = &anglebracketed_argument.args;
+                            //let sec = &args[1];
+                            let first_tst = convert_generic(&args[0], is_return_type);
+                            let second_tst = convert_generic(&args[1], is_return_type);
+                            format!("{} | {}", first_tst.ts_type, second_tst.ts_type)
+                        }
+                        _ => "unknown".to_string(),
+                    },
+                },
                 "Option" => TsType {
                     is_optional: true,
+                    is_result: false,
                     ts_type: match arguments {
                         syn::PathArguments::Parenthesized(parenthesized_argument) => {
                             format!("{:?}", parenthesized_argument)
@@ -103,8 +128,8 @@ pub fn convert_type(ty: &syn::Type, is_return_type: bool) -> TsType {
                         //"Array<{}>",
                         "{}[]",
                         match convert_generic(anglebracketed_argument.args.first().unwrap(), is_return_type) {
-                            TsType{ is_optional: true, ts_type } => format!("{} | undefined", ts_type),
-                            TsType{ is_optional: false, ts_type } => ts_type
+                            TsType{ is_optional: true, is_result: _, ts_type } => format!("{} | undefined", ts_type),
+                            TsType{ is_optional: false, is_result: _, ts_type } => ts_type
                         }
                     ),
                     _ => "unknown".to_string(),
@@ -122,6 +147,7 @@ pub fn convert_type(ty: &syn::Type, is_return_type: bool) -> TsType {
             str.push(']');
             return TsType {
                 is_optional: false,
+                is_result: false,
                 ts_type: str,
             };
         },
