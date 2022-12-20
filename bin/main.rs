@@ -4,7 +4,7 @@ use structopt::StructOpt;
 const DESCRIPTION: &'static str = env!("CARGO_PKG_DESCRIPTION");
 
 #[derive(Debug, StructOpt, Clone)]
-#[structopt(about = DESCRIPTION, after_help = "This command helps generate bindings for typescript.")]
+#[structopt(about = DESCRIPTION, after_help = "This command helps generate typescript bindings for zome code. Compatible with holochain-client-js v0.11.2")]
 struct Args {
     /// Activate debug mode
     #[structopt(long, help = "Dry-run, prints to stdout", short = "d", long = "debug")]
@@ -27,7 +27,7 @@ struct Args {
     /// zome-name
     #[structopt(
     long = "--default-zome-name",
-    help = "Set the DEFAULT_ZOME_NAME for the gengerated proxy. Default is output's filename.",
+    help = "Set the DEFAULT_ZOME_NAME for the generated proxy. Default is output's filename.",
     )]
     zome_name: Option<String>,
 

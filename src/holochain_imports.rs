@@ -1,5 +1,5 @@
 
-/// from @Holochain/client v0.9.3
+/// from @Holochain/client v0.11.2
 pub const HOLOCHAIN_CLIENT_IMPORTS: &str = "
 import {
 /** Types */
@@ -12,14 +12,23 @@ ActionHash,
 AnyDhtHash,
 KitsuneAgent,
 KitsuneSpace,
+HoloHashB64,
+AgentPubKeyB64,
+DnaHashB64,
+WasmHashB64,
+EntryHashB64,
+ActionHashB64,
+AnyDhtHashB64,
 InstalledAppId,
 Signature,
 CellId,
 DnaProperties,
-RoleId,
+RoleName,
 InstalledCell,
 Timestamp,
 HoloHashed,
+NetworkInfo,
+FetchQueueInfo,
 /** Action */
 SignedActionHashed,
 ActionHashed,
@@ -60,7 +69,7 @@ getDhtOpEntry,
 getDhtOpSignature,
 /** Entry */
 EntryVisibility,
-AppEntryType,
+AppEntryDef,
 EntryType,
 EntryContent,
 Entry,
@@ -68,8 +77,15 @@ Entry,
 Record,
 RecordEntry,
 /** admin types */
-ZomeName,
+InstalledAppInfoStatus,
+StemCell,
+Cell,
+CELL_TYPE,
+CellInfo,
+AppInfo,
 MembraneProof,
+FunctionName,
+ZomeName,
 ZomeDefinition,
 IntegrityZome,
 CoordinatorZome,
@@ -77,7 +93,6 @@ DnaDefinition,
 ResourceBytes,
 ResourceMap,
 CellProvisioning,
-HoloHashB64,
 DnaVersionSpec,
 DnaVersionFlexible,
 NetworkSeed,
@@ -89,27 +104,22 @@ ZomeLocation,
 /// from @Holochain-open-dev/core-types v0.6.1
 pub const HOD_CORE_TYPES_IMPORTS: &str = "
 import {
-// Common
+/** Common */
 Dictionary,
-EntryHashB64,
-ActionHashB64,
 DhtOpHashB64,
-DnaHashB64,
-AgentPubKeyB64,
-AnyDhtHashB64,
 DhtOpHash,
-// DnaFile
+/** DnaFile */
 DnaFile,
 DnaDef,
 Zomes,
 WasmCode,
-// entry-details
+/** entry-details */
 EntryDetails,
 RecordDetails,
 Details,
 DetailsType,
 EntryDhtStatus,
-// Validation
+/** Validation */
 ValidationStatus,
 ValidationReceipt,
    } from '@holochain-open-dev/core-types';
