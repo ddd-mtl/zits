@@ -138,11 +138,16 @@ pub fn convert_type(ty: &syn::Type, is_return_type: bool) -> TsType {
             }
         }
         syn::Type::Tuple(p) => {
-            if p.elems.is_empty() {return "void".to_string().into();}
+            if p.elems.is_empty() {
+                return "void".to_string().into();
+            }
             let mut str = String::from("[");
-            for elem in p.elems.iter() {
-                str.push_str(&convert_type(&elem, is_return_type).ts_type);
+            let mut iter = p.elems.iter();
+            let first = iter.next().unwrap();
+            str.push_str(&convert_type(&first, is_return_type).ts_type);
+            for elem in iter {
                 str.push_str(", ");
+                str.push_str(&convert_type(&elem, is_return_type).ts_type);
             }
             str.push(']');
             return TsType {

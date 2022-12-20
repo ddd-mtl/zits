@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{BTreeMap};
 use std::fs::File;
 use std::io::Read;
 use std::path::PathBuf;
@@ -16,7 +16,7 @@ pub struct ParseState {
    pub type_defs_output: String,
    pub zome_proxy_output: String,
    /// item_kind -> item_ident[]
-   pub converted_items: HashMap<&'static str, Vec<String>>,
+   pub converted_items: BTreeMap<&'static str, Vec<String>>,
 }
 
 
@@ -24,7 +24,7 @@ impl ParseState {
 
 
    pub fn new(config: GenConfig) -> Self {
-      let mut converted_items = HashMap::new();
+      let mut converted_items = BTreeMap::new();
       converted_items.insert("const", Vec::<String>::new());
       converted_items.insert("fn", Vec::<String>::new());
       converted_items.insert("struct", Vec::<String>::new());
