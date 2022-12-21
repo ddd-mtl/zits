@@ -130,7 +130,7 @@ impl ParseState {
       }
       self.zome_proxy_output.insert_str(
          MAGIC_FIRST_LINE.len() + 1,
-         &format!("\nimport {{{}}} from './{}';", all_types, zome_name));
+         &format!("\nimport {{{}}} from './{}.types';", all_types, zome_name));
    }
 
 
@@ -144,13 +144,16 @@ impl ParseState {
 
       self.zome_proxy_output.push_str(&format!("
 import {{ZomeProxy}} from '@ddd-qc/lit-happ';
+import {{{camel_name}FunctionNames}} from './{camel_name}.fn';
 
 /**
  *
  */
-export class {}Proxy extends ZomeProxy {{
-  static readonly DEFAULT_ZOME_NAME = \"{}\"
- ", zome_name.to_case(Case::Pascal), default_zome_name
+export class {pascal_name}Proxy extends ZomeProxy {{
+  static readonly DEFAULT_ZOME_NAME = \"{default_name}\"
+  readonly FN_NAMES = {camel_name}FunctionNames
+ ", pascal_name = zome_name.to_case(Case::Pascal),
+                                               default_name = default_zome_name, camel_name = zome_name.to_case(Case::Camel)
       ));
    }
 
@@ -179,7 +182,8 @@ export const {zome_name}ZomeFunctions: [ZomeName, FunctionName][] = generate{pas
 
 
 /** Array of all zome function names in \"{zome_name}\" */
-const {zome_name}FunctionNames: FunctionName[] = ["
+export const {zome_name}FunctionNames: FunctionName[] = [
+\t\"entry_defs\","
          , pascal_name = zome_name.to_case(Case::Pascal)
          , zome_name = zome_name.to_case(Case::Camel)
          , default_zome_name = default_zome_name

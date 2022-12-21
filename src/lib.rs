@@ -181,9 +181,11 @@ pub fn generate_typescript_bindings(
             }
         }
 
-        let mut file: File = File::create(&output).expect("Unable to write to file");
-        match file.write_all(state.type_defs_output.as_bytes()) {
-            Ok(_) => println!("Successfully generated typescript bindings: {:#?}", output),
+        let mut types_output: PathBuf = output.clone();
+        types_output.set_file_name(format!("{}.types.ts", zome_name));
+        let mut types_file: File = File::create(&types_output).expect("Unable to write to file");
+        match types_file.write_all(state.type_defs_output.as_bytes()) {
+            Ok(_) => println!("Successfully generated typescript bindings: {:#?}", types_output),
             Err(_) => println!("Failed to generate types, an error occurred."),
         }
 
