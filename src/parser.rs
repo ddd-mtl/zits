@@ -15,6 +15,7 @@ pub struct ParseState {
    pub unprocessed_files: Vec<PathBuf>,
    pub type_defs_output: String,
    pub zome_proxy_output: String,
+   pub zome_fn_names_output: String,
    /// item_kind -> item_ident[]
    pub converted_items: BTreeMap<&'static str, Vec<String>>,
 }
@@ -22,7 +23,7 @@ pub struct ParseState {
 
 impl ParseState {
 
-
+   ///
    pub fn new(config: GenConfig) -> Self {
       let mut converted_items = BTreeMap::new();
       converted_items.insert("const", Vec::<String>::new());
@@ -36,6 +37,7 @@ impl ParseState {
          unprocessed_files: Vec::<PathBuf>::new(),
          type_defs_output: String::new(),
          zome_proxy_output: String::new(),
+         zome_fn_names_output: String::new(),
          converted_items,
       }
    }
@@ -104,6 +106,8 @@ impl ParseState {
       }
    }
 
+
+   ///
    pub fn write_type_defs_header(&mut self) {
       self.type_defs_output.push_str(&format!("{}\n", MAGIC_FIRST_LINE));
       if self.config.can_hc_imports {
@@ -150,4 +154,35 @@ export class {}Proxy extends ZomeProxy {{
       ));
    }
 
+
+
+   ///
+   pub fn write_zome_fn_names_header(&mut self, zome_name: &str, default_zome_name: &str) {
+      self.zome_fn_names_output.push_str(&format!("{}\n", MAGIC_FIRST_LINE));
+      self.zome_fn_names_output.push_str(&format!("
+import {{ZomeName, FunctionName}} from '@holochain/client';
+
+
+/** Generate tuple array of function names with given zomeName */
+export function generate{pascal_name}ZomeFunctionsArray(zomeName: ZomeName): [ZomeName, FunctionName][] {{
+   let fns = [];
+   for (const fn of {zome_name}FunctionNames) {{
+      fns.push([zomeName, fn]);
+   }}
+   return fns;
+}}
+
+
+/** Tuple array of all zome function names with default zome name \"{default_zome_name}\" */
+export const {zome_name}ZomeFunctions: [ZomeName, FunctionName][] = generate{pascal_name}ZomeFunctionsArray(\"{default_zome_name}\");
+
+
+
+/** Array of all zome function names in \"{zome_name}\" */
+const {zome_name}FunctionNames: FunctionName[] = ["
+         , pascal_name = zome_name.to_case(Case::Pascal)
+         , zome_name = zome_name.to_case(Case::Camel)
+         , default_zome_name = default_zome_name
+      ));
+   }
 }

@@ -61,6 +61,7 @@ pub fn generate_typescript_bindings(
 
     if !can_debug {
         state.write_type_defs_header();
+        state.write_zome_fn_names_header(&zome_name, &default_zome_name);
         if can_proxy { state.write_zome_proxy_header(&zome_name, &default_zome_name); }
     }
 
@@ -117,6 +118,8 @@ pub fn generate_typescript_bindings(
         state.zome_proxy_output.push_str(&format!("}}\n"));
         /// Append type imports to ZomeProxy
         state.write_type_defs_import(&zome_name);
+        /// ZomeFnNames file footer
+        state.zome_fn_names_output.push_str(&format!("]\n"));
     }
 
     /** */
@@ -136,6 +139,10 @@ pub fn generate_typescript_bindings(
             println!("{}", state.zome_proxy_output);
             println!("======================================");
         }
+        println!("Function Names for \"{}\"", zome_name);
+        println!("======================================");
+        println!("{}", state.zome_fn_names_output);
+        println!("======================================");
     } else {
         println!("======================================");
         println!("Bindings generated for \"{}\"", zome_name);
@@ -190,6 +197,20 @@ pub fn generate_typescript_bindings(
                 Ok(_) => println!("Successfully generated ZomeProxy: {:#?}", proxy_output),
                 Err(_) => println!("Failed to generate ZomeProxy, an error occurred."),
             }
+        }
+
+        /// FnNames file
+        if count_fn > 0 {
+            let mut fn_output: PathBuf = output.clone();
+            fn_output.set_file_name(format!("{}.fn.ts", zome_name));
+            //println!("ProxyFile: {:?}", proxy_output);
+            let mut fn_file: File = File::create(&fn_output).expect("Unable to write to file");
+            match fn_file.write_all(state.zome_fn_names_output.as_bytes()) {
+                Ok(_) => println!("Successfully generated FnNames: {:#?}", fn_output),
+                Err(_) => println!("Failed to generate FnNames, an error occurred."),
+            }
+        } else {
+            println!("FnNames file not generated as no function has been found");
         }
     }
 

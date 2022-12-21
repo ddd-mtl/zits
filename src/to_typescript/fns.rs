@@ -23,6 +23,7 @@ impl super::ToTypescript for syn::ItemFn {
 
    fn convert_to_ts(self, state: &mut ParseState, _debug: bool, _uses_typeinterface: bool) {
       state.zome_proxy_output.push('\n');
+      state.zome_fn_names_output.push('\n');
 
       //let comments = utils::get_comments(self.clone().attrs);
       //write_comments(&mut state.fns_file, &comments, 0);
@@ -80,5 +81,8 @@ impl super::ToTypescript for syn::ItemFn {
       ));
 
       state.zome_proxy_output.push_str("  }\n");
+
+      /// zome_fn_names
+      state.zome_fn_names_output.push_str(&format!("\t\"{}\",", fn_name));
    }
 }
