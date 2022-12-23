@@ -61,7 +61,7 @@ pub fn generate_typescript_bindings(
 
     if !can_debug {
         state.write_type_defs_header();
-        state.write_zome_fn_names_header(&zome_name, &default_zome_name);
+        state.write_zome_fn_names_header(&zome_name);
         if can_proxy { state.write_zome_proxy_header(&zome_name, &default_zome_name); }
     }
 
@@ -119,7 +119,8 @@ pub fn generate_typescript_bindings(
         /// Append type imports to ZomeProxy
         state.write_type_defs_import(&zome_name);
         /// ZomeFnNames file footer
-        state.zome_fn_names_output.push_str(&format!("]\n"));
+        state.write_zome_fn_names_footer(&zome_name, &default_zome_name);
+        //state.zome_fn_names_output.push_str(&format!("]\n"));
     }
 
     /** */

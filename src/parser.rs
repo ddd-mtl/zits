@@ -144,31 +144,47 @@ impl ParseState {
 
       self.zome_proxy_output.push_str(&format!("
 import {{ZomeProxy}} from '@ddd-qc/lit-happ';
-import {{{camel_name}FunctionNames}} from './{camel_name}.fn';
+import {{{camel_name}FunctionNames}} from './{zome_name}.fn';
 
 /**
  *
  */
 export class {pascal_name}Proxy extends ZomeProxy {{
   static readonly DEFAULT_ZOME_NAME = \"{default_name}\"
-  readonly FN_NAMES = {camel_name}FunctionNames
- ", pascal_name = zome_name.to_case(Case::Pascal),
-                                               default_name = default_zome_name, camel_name = zome_name.to_case(Case::Camel)
+  static readonly FN_NAMES = {camel_name}FunctionNames
+ ", pascal_name = zome_name.to_case(Case::Pascal)
+ , zome_name = zome_name
+
+                                               ,default_name = default_zome_name 
+                                               ,camel_name = zome_name.to_case(Case::Camel)
       ));
    }
 
 
 
    ///
-   pub fn write_zome_fn_names_header(&mut self, zome_name: &str, default_zome_name: &str) {
+   pub fn write_zome_fn_names_header(&mut self, zome_name: &str) {
       self.zome_fn_names_output.push_str(&format!("{}\n", MAGIC_FIRST_LINE));
       self.zome_fn_names_output.push_str(&format!("
 import {{ZomeName, FunctionName}} from '@holochain/client';
 
 
+/** Array of all zome function names in \"{zome_name}\" */
+export const {zome_name}FunctionNames: FunctionName[] = [
+\t\"entry_defs\","
+         , zome_name = zome_name.to_case(Case::Camel)
+      ));
+   }
+
+
+      ///
+      pub fn write_zome_fn_names_footer(&mut self, zome_name: &str, default_zome_name: &str) {
+         self.zome_fn_names_output.push_str(&format!("];
+
+
 /** Generate tuple array of function names with given zomeName */
 export function generate{pascal_name}ZomeFunctionsArray(zomeName: ZomeName): [ZomeName, FunctionName][] {{
-   let fns = [];
+   let fns: [ZomeName, FunctionName][] = [];
    for (const fn of {zome_name}FunctionNames) {{
       fns.push([zomeName, fn]);
    }}
@@ -178,15 +194,10 @@ export function generate{pascal_name}ZomeFunctionsArray(zomeName: ZomeName): [Zo
 
 /** Tuple array of all zome function names with default zome name \"{default_zome_name}\" */
 export const {zome_name}ZomeFunctions: [ZomeName, FunctionName][] = generate{pascal_name}ZomeFunctionsArray(\"{default_zome_name}\");
-
-
-
-/** Array of all zome function names in \"{zome_name}\" */
-export const {zome_name}FunctionNames: FunctionName[] = [
-\t\"entry_defs\","
-         , pascal_name = zome_name.to_case(Case::Pascal)
-         , zome_name = zome_name.to_case(Case::Camel)
-         , default_zome_name = default_zome_name
+"
+, pascal_name = zome_name.to_case(Case::Pascal)
+, zome_name = zome_name.to_case(Case::Camel)
+, default_zome_name = default_zome_name
       ));
    }
 }
