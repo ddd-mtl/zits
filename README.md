@@ -4,7 +4,7 @@
 
 **Compatible with:**
  - **HDK v0.1.0-beta-rc.1** & **HDI v0.2.0-beta-rc.2**
- - **@holochain/client v0.11.2**
+ - **@holochain/client v0.11.8**
  - **@holochain-open-dev/core-types v0.6.1**
  - **@ddd-qc/cell-proxy v0.10.0**
 
@@ -39,10 +39,12 @@ Use the CLI tool on the folders of your zome code:
 zits -i ./zomes/profiles -i ./zomes/profiles_integrity -o ./bindings/profiles.ts
 ```
 
-Typescript bindings will be generated for all types, structs, enums, marked with holochain or serde specific attributes. (`#[hdk_entry_helper]`, `#[hdk_entry_defs]`, etc).
+Typescript bindings will be generated for all types, structs and enums, marked with holochain or serde specific attributes (`#[hdk_entry_helper]`, `#[hdk_entry_defs]`, etc). The bindings file will be named `*.types.ts`.
 The serde `rename_all` attribute argument is supported.
 
-A `ZomeProxy` subclass for [cell-proxy](https://npmjs.org/@ddd-qc/cell-proxy) will be generated in its own file. It will have a method for each function marked with `[hdk_extern]`, excluding the holochain callbacks like `init()` or `validate()`. It will be named after the filename given as output. The file will also have the same name with `.proxy.ts` as extension.
+All functions marked with holochain attributes `#[hdk_extern]`, except the Holochain callbacks, will be listed in a typescript array to be consumed by Holochain's credential authorizing mechanism. The array will be written in a file named `*.fn.ts`. 
+
+A `ZomeProxy` subclass for [cell-proxy](https://npmjs.org/@ddd-qc/cell-proxy) will be generated in its own file. It will have a method for each function marked with `[hdk_extern]`, excluding the holochain callbacks like `init()` or `validate()`. It will be named after the filename given as output. The file will also have the same name with `*.proxy.ts` as extension.
 
 
 ## Multiple Inputs
