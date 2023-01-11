@@ -75,8 +75,8 @@ EntryType,
 EntryContent,
 Entry,
 /** Record */
-Record,
-RecordEntry,
+Record as HcRecord,
+RecordEntry as HcRecordEntry,
 /** admin types */
 InstalledAppInfoStatus,
 StemCell,
@@ -106,7 +106,6 @@ ZomeLocation,
 pub const HOD_CORE_TYPES_IMPORTS: &str = "
 import {
 /** Common */
-Dictionary,
 DhtOpHashB64,
 DhtOpHash,
 /** DnaFile */

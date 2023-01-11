@@ -19,7 +19,7 @@ fn create_next_session(input: CreateNextSessionInput) -> ExternResult<(EntryHash
 
 
 #[hdk_extern]
-fn get_all_playsets(_: ()) -> ExternResult<Vec<PlaysetOutput>> {
+fn get_all_playsets(_: ()) -> ExternResult<Vec<Record>> {
    Ok(vec![])
 }
 

@@ -54,6 +54,9 @@ pub fn convert_type(ty: &syn::Type, is_return_type: bool) -> TsType {
                 // TODO: should be imported from holochain/client instead
                 "XSalsa20Poly1305EncryptedData" => "unknown".to_string().into(),
                 "X25519PubKey" => "Uint8Array".to_string().into(),
+                /// Record
+                "Record" => "HcRecord".to_string().into(),
+                "RecordEntry" => "HcRecordEntry".to_string().into(),
                 /// Date
                 "NaiveDateTime" => "Date".to_string().into(),
                 "DateTime" => "Date".to_string().into(),
@@ -63,7 +66,7 @@ pub fn convert_type(ty: &syn::Type, is_return_type: bool) -> TsType {
                         format!("{:?}", parenthesized_argument)
                     }
                     syn::PathArguments::AngleBracketed(anglebracketed_argument) => format!(
-                        "Dictionary<{}>",
+                        "Record<string, {}>",
                         match convert_generic(anglebracketed_argument.args.first().unwrap(), is_return_type) {
                             TsType{ is_optional: true, is_result: _ ,ts_type } => format!("{} | undefined", ts_type),
                             TsType{ is_optional: false, is_result: _ , ts_type } => ts_type

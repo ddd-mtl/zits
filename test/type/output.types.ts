@@ -74,8 +74,8 @@ EntryType,
 EntryContent,
 Entry,
 /** Record */
-Record,
-RecordEntry,
+Record as HcRecord,
+RecordEntry as HcRecordEntry,
 /** admin types */
 InstalledAppInfoStatus,
 StemCell,
@@ -101,7 +101,6 @@ ZomeLocation,
 
 import {
 /** Common */
-Dictionary,
 DhtOpHashB64,
 DhtOpHash,
 /** DnaFile */

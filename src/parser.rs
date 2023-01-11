@@ -128,6 +128,9 @@ impl ParseState {
             all_types.push_str(", ");
          }
       }
+      if all_types.is_empty() {
+         return;
+      }
       self.zome_proxy_output.insert_str(
          MAGIC_FIRST_LINE.len() + 1,
          &format!("\nimport {{{}}} from './{}.types';", all_types, zome_name));

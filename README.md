@@ -132,9 +132,11 @@ Support added for types defined in `@holochain/client` and `@holochain-open-dev/
 
 Support includes, but is not limited to, the following "base" types:
 - `ExternResult<T>` converts to `Promise<T>`
-- `BTreeMap<T>` converts to `Dictionary<T>`
+- `BTreeMap<T>` converts to `Record<string, T>`
 - `Result<A, B>` converts to `A | B`
 - `X25519PubKey` converts to `Uint8Array`
+
+**Holochain's `Record` and `RecordEntry` types are renamed `HcRecord` and `HcRecordEntry` respectively as to not conflict with typescript's native `Record` utility type.**
 
 
 ## Functions

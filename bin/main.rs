@@ -52,6 +52,8 @@ struct Args {
 
 fn main() {
     let args: Args = Args::from_args();
+    const VERSION: &str = env!("CARGO_PKG_VERSION");
+    println!("Running zits v{}", VERSION);
     zits::generate_typescript_bindings(
         args.input,
         args.output,
