@@ -51,6 +51,7 @@ CapClaim,
 ZomeCallCapGrant,
 CapAccess,
 CapGrant,
+GrantedFunctionsType,
 /** CounterSigning */
 //CounterSigningSessionData,
 //PreflightRequest,
