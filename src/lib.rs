@@ -182,12 +182,16 @@ pub fn generate_typescript_bindings(
             }
         }
 
-        let mut types_output: PathBuf = output.clone();
-        types_output.set_file_name(format!("{}.types.ts", zome_name));
-        let mut types_file: File = File::create(&types_output).expect("Unable to write to file");
-        match types_file.write_all(state.type_defs_output.as_bytes()) {
-            Ok(_) => println!("Successfully generated typescript bindings: {:#?}", types_output),
-            Err(_) => println!("Failed to generate types, an error occurred."),
+        if count_const + count_type + count_struct + count_enum > 0 {
+            let mut types_output: PathBuf = output.clone();
+            types_output.set_file_name(format!("{}.types.ts", zome_name));
+            let mut types_file: File = File::create(&types_output).expect("Unable to write to file");
+            match types_file.write_all(state.type_defs_output.as_bytes()) {
+                Ok(_) => println!("Successfully generated types: {:#?}", types_output),
+                Err(_) => println!("Failed to generate types, an error occurred."),
+            }
+        } else {
+            println!("Types file not generated as no types have been found.");
         }
 
         if can_proxy {
@@ -213,7 +217,7 @@ pub fn generate_typescript_bindings(
                 Err(_) => println!("Failed to generate FnNames, an error occurred."),
             }
         } else {
-            println!("FnNames file not generated as no function has been found");
+            println!("FnNames file not generated as no functions have been found");
         }
     }
 

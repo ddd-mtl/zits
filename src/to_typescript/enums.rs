@@ -9,7 +9,7 @@ use crate::utils::write_comments;
 
 
 /// Conversion of Rust Enum to Typescript using external tagging as per https://serde.rs/enum-representations.html
-/// however conversion will adhere to the `serde` `tag` such that enums are intenrally tagged
+/// however conversion will adhere to the `serde` `tag` such that enums are internally tagged
 /// (while the other forms such as adjacent tagging aren't supported).
 /// `renameAll` attributes for the name of the tag will also be adhered to.
 impl super::ToTypescript for syn::ItemEnum {
@@ -22,7 +22,9 @@ impl super::ToTypescript for syn::ItemEnum {
     ///
     fn convert_to_ts(self, state: &mut ParseState, _debug: bool, uses_typeinterface: bool) {
 
-        // Tuple structs not allowed as that could mess things up if we do ignore this struct
+        println!("[zits][debug]Converting enum \"{}\" as:", self.ident.to_string());
+
+        /** Tuple structs not allowed as that could mess things up if we do ignore this struct */
         let have_one_unnamed = self.variants.iter().any(|x| {
             if let Fields::Unnamed(_) = x.fields { return true; }
             return false;
@@ -62,9 +64,9 @@ impl super::ToTypescript for syn::ItemEnum {
             if let Some(tag_name) = utils::get_attribute_arg("serde", "tag", &self.attrs) {
                 let content_name = utils::get_attribute_arg("serde", "content", &self.attrs)
                    .unwrap_or("content".to_string());
-                make_tagged_unnamed_enum(&tag_name, &content_name, self, state);
+                make_tagged_unnamed_enum(&tag_name, &content_name, self, state, casing);
             } else {
-                make_unnamed_enum(self, state);
+                make_unnamed_enum(self, state, casing);
             }
             return;
         }
@@ -81,7 +83,30 @@ impl super::ToTypescript for syn::ItemEnum {
 
 /// This convert an all unit enums to a union of const strings in Typescript.
 /// It will ignore any discriminants.  
+// fn make_unit_enum(exported_enum: syn::ItemEnum, state: &mut ParseState, casing: Option<Case>) {
+//     println!("[zits][debug]  - unit enum");
+//
+//     state.type_defs_output.push_str(&format!(
+//         "export type {interface_name} =\n{space}",
+//         interface_name = exported_enum.ident.to_string(),
+//         space = utils::build_indentation(1)
+//     ));
+//
+//     for variant in exported_enum.variants {
+//         let field_name = if let Some(casing) = casing {
+//             variant.ident.to_string().to_case(casing)
+//         } else {
+//             variant.ident.to_string()
+//         };
+//         state.type_defs_output.push_str(&format!(" | \"{}\"", field_name));
+//     }
+//
+//     state.type_defs_output.push_str(";\n");
+// }
+
 fn make_unit_enum(exported_enum: syn::ItemEnum, state: &mut ParseState, casing: Option<Case>) {
+    println!("[zits][debug]  - unit enum");
+
     state.type_defs_output.push_str(&format!(
         "export type {interface_name} =\n{space}",
         interface_name = exported_enum.ident.to_string(),
@@ -94,12 +119,11 @@ fn make_unit_enum(exported_enum: syn::ItemEnum, state: &mut ParseState, casing: 
         } else {
             variant.ident.to_string()
         };
-        state.type_defs_output.push_str(&format!(" | \"{}\"", field_name));
+        state.type_defs_output.push_str(&format!(" | {{{}: null}}", field_name));
     }
 
     state.type_defs_output.push_str(";\n");
 }
-
 
 /// Numeric enums. These will be converted using enum syntax
 /// ```ignore
@@ -131,6 +155,8 @@ fn make_numeric_enum(
     casing: Option<Case>,
     uses_typeinterface: bool,
 ) {
+    println!("[zits][debug]  - numeric enum");
+
     let declare = if uses_typeinterface { "declare " } else { "" };
     state.type_defs_output.push_str(&format!(
         "{declare}enum {interface_name} {{",
@@ -199,6 +225,8 @@ fn make_variant_enum(
     state: &mut ParseState,
     casing: Option<Case>,
 ) {
+    println!("[zits][debug]  - variant enum");
+
     state.type_defs_output.push_str(&format!(
         "export type {interface_name}{generics} =",
         interface_name = exported_enum.ident.to_string(),
@@ -214,7 +242,7 @@ fn make_variant_enum(
         } else {
             variant.ident.to_string()
         };
-        // add discriminant
+        /// add discriminant
         state.type_defs_output.push_str(&format!(
             "  | {{\n{}{}: \"{}\",\n",
             utils::build_indentation(6),
@@ -234,6 +262,8 @@ fn make_externally_tagged_variant_enum(
     state: &mut ParseState,
     casing: Option<Case>,
 ) {
+    println!("[zits][debug]  - externally tagged variant enum");
+
     state.type_defs_output.push_str(&format!(
         "export type {interface_name}{generics} =",
         interface_name = exported_enum.ident.to_string(),
@@ -273,7 +303,7 @@ fn make_externally_tagged_variant_enum(
 
 ///
 fn make_unnamed_string_enum(exported_enum: syn::ItemEnum, state: &mut ParseState) {
-    println!("[zits][debug] Making unnamed string enum \"{}\"", exported_enum.ident.to_string());
+    println!("[zits][debug]  - unnamed string enum");
 
     state.type_defs_output.push_str(&format!("export enum {}Type {{\n", exported_enum.ident.to_string()));
 
@@ -287,15 +317,25 @@ fn make_unnamed_string_enum(exported_enum: syn::ItemEnum, state: &mut ParseState
 
 
 ///
-fn make_tagged_unnamed_enum(tag_name: &str, content_name: &str, exported_enum: syn::ItemEnum, state: &mut ParseState) {
+fn make_tagged_unnamed_enum(
+    tag_name: &str,
+    content_name: &str,
+    exported_enum: syn::ItemEnum,
+    state: &mut ParseState,
+    casing: Option<Case>,
+) {
     let enum_name = exported_enum.ident.to_string();
-    println!("[zits][debug] Making tagged unnamed enum \"{}\"", enum_name);
+    println!("[zits][debug]  - tagged unnamed enum");
 
     let mut succeeded = true;
     /// write each enum variant as type
     let mut variant_types = Vec::new();
     for variant in exported_enum.variants {
-        let variant_name = variant.ident.to_string();
+        let variant_name = if let Some(case) = casing {
+            variant.ident.to_string().to_case(case)
+        } else {
+            variant.ident.to_string()
+        };
         let variant_type = get_segment_ident(variant.fields, &enum_name);
         if variant_type.is_err() {
             succeeded = false;
@@ -304,8 +344,8 @@ fn make_tagged_unnamed_enum(tag_name: &str, content_name: &str, exported_enum: s
         variant_types.push(format!("{{{tag_name}: \"{variant_name}\", {content_name}: {variant_type}}}\n",
             tag_name = tag_name,
             content_name = content_name,
-                               variant_name = variant_name.to_case(Case::Pascal),
-                               variant_type = variant_type.unwrap(),
+            variant_name = variant_name.to_case(Case::Pascal),
+            variant_type = variant_type.unwrap(),
         ));
     }
     ///
@@ -324,17 +364,21 @@ fn make_tagged_unnamed_enum(tag_name: &str, content_name: &str, exported_enum: s
 
 
 ///
-fn make_unnamed_enum(exported_enum: syn::ItemEnum, state: &mut ParseState) {
+fn make_unnamed_enum(exported_enum: syn::ItemEnum, state: &mut ParseState, casing: Option<Case>) {
     let enum_name = exported_enum.ident.to_string();
-    println!("[zits][debug] Making unnamed enum \"{}\"", enum_name);
+    println!("[zits][debug]  - unnamed enum");
 
     let mut temp = String::new();
     let mut succeeded = true;
     /// write each enum variant as type
     let mut variant_types = Vec::new();
     for variant in exported_enum.variants {
-        let variant_name = variant.ident.to_string();
-        let variant_type_name = format!("{}Variant{}", enum_name, variant_name.to_case(Case::Pascal));
+        let variant_name = if let Some(case) = casing {
+            variant.ident.to_string().to_case(case)
+        } else {
+            variant.ident.to_string()
+        };
+        let variant_type_name = format!("{}Variant{}", enum_name, variant.ident.to_string().to_case(Case::Pascal));
         let maybe_variant_type = get_segment_ident(variant.fields, &enum_name);
         if let Err(e) = maybe_variant_type {
             eprintln!("{}", e);
@@ -344,7 +388,7 @@ fn make_unnamed_enum(exported_enum: syn::ItemEnum, state: &mut ParseState) {
         variant_types.push(variant_type_name.clone());
         temp.push_str(&format!("export type {variant_type_name} = {{{variant_name}: {variant_type}}}\n",
                                variant_type_name = variant_type_name,
-                               variant_name = variant_name.to_case(Case::Camel),
+                               variant_name = variant_name, //.to_case(Case::Camel),
                                variant_type = maybe_variant_type.unwrap(),
         ));
     }

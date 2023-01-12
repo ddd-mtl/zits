@@ -45,15 +45,15 @@ export type ExternalMessage =
     };
 
 /**
- * All Unit Enums go to union of constant strings
+ * All Unit Enums go to union of constant strings (or null types)
  * even if have explicit numeric annotations
  * There is no case renaming on default
  */
 export type Animal =
-  | "Dog" | "Cat";
+  | {Dog: null} | {Cat: null};
 
 export type AnimalTwo =
-  | "dog_long_extra" | "cat";
+  | {dog_long_extra: null} | {cat: null};
 
 /** Integer enums should follow rust discrimination if literals (doesn't evaluate expression) */
 enum Foo {
@@ -77,10 +77,10 @@ export enum PlaysetEntryType {
 	Template = 'Template',
 	Space = 'Space',
 }
-export type PlaysetEntryVariantSvgMarker = {svgMarker: SvgMarker}
-export type PlaysetEntryVariantEmojiGroup = {emojiGroup: EmojiGroup}
-export type PlaysetEntryVariantTemplate = {template: Template}
-export type PlaysetEntryVariantSpace = {space: Space}
+export type PlaysetEntryVariantSvgMarker = {SvgMarker: SvgMarker}
+export type PlaysetEntryVariantEmojiGroup = {EmojiGroup: EmojiGroup}
+export type PlaysetEntryVariantTemplate = {Template: Template}
+export type PlaysetEntryVariantSpace = {Space: Space}
 export type PlaysetEntry = 
  | PlaysetEntryVariantSvgMarker | PlaysetEntryVariantEmojiGroup | PlaysetEntryVariantTemplate | PlaysetEntryVariantSpace;
 
@@ -145,15 +145,15 @@ export enum DirectMessageProtocolType {
 	UnknownEntry = 'UnknownEntry',
 	Ping = 'Ping',
 }
-export type DirectMessageProtocolVariantFailure = {failure: string}
-export type DirectMessageProtocolVariantSuccess = {success: string}
-export type DirectMessageProtocolVariantMail = {mail: MailMessage}
-export type DirectMessageProtocolVariantAck = {ack: AckMessage}
-export type DirectMessageProtocolVariantChunk = {chunk: FileChunk}
-export type DirectMessageProtocolVariantFileManifest = {fileManifest: FileManifest}
-export type DirectMessageProtocolVariantRequestChunk = {requestChunk: EntryHash}
-export type DirectMessageProtocolVariantRequestManifest = {requestManifest: EntryHash}
-export type DirectMessageProtocolVariantUnknownEntry = {unknownEntry: null}
-export type DirectMessageProtocolVariantPing = {ping: null}
+export type DirectMessageProtocolVariantFailure = {Failure: string}
+export type DirectMessageProtocolVariantSuccess = {Success: string}
+export type DirectMessageProtocolVariantMail = {Mail: MailMessage}
+export type DirectMessageProtocolVariantAck = {Ack: AckMessage}
+export type DirectMessageProtocolVariantChunk = {Chunk: FileChunk}
+export type DirectMessageProtocolVariantFileManifest = {FileManifest: FileManifest}
+export type DirectMessageProtocolVariantRequestChunk = {RequestChunk: EntryHash}
+export type DirectMessageProtocolVariantRequestManifest = {RequestManifest: EntryHash}
+export type DirectMessageProtocolVariantUnknownEntry = {UnknownEntry: null}
+export type DirectMessageProtocolVariantPing = {Ping: null}
 export type DirectMessageProtocol = 
  | DirectMessageProtocolVariantFailure | DirectMessageProtocolVariantSuccess | DirectMessageProtocolVariantMail | DirectMessageProtocolVariantAck | DirectMessageProtocolVariantChunk | DirectMessageProtocolVariantFileManifest | DirectMessageProtocolVariantRequestChunk | DirectMessageProtocolVariantRequestManifest | DirectMessageProtocolVariantUnknownEntry | DirectMessageProtocolVariantPing;

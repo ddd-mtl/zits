@@ -39,7 +39,7 @@ enum ExternalMessage {
     },
 }
 
-/// All Unit Enums go to union of constant strings
+/// All Unit Enums go to union of constant strings (or null types)
 /// even if have explicit numeric annotations
 /// There is no case renaming on default
 #[serde]
