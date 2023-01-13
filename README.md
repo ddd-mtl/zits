@@ -39,7 +39,8 @@ Use the CLI tool on the folders of your zome code:
 zits -i ./zomes/profiles -i ./zomes/profiles_integrity -o ./bindings/profiles.ts
 ```
 
-Typescript bindings will be generated for all types, structs and enums, marked with holochain or serde specific attributes (`#[hdk_entry_helper]`, `#[hdk_entry_defs]`, etc). The bindings file will be named `*.types.ts`.
+Typescript bindings will be generated for all types, structs, enums, and consts marked with holochain or serde specific attributes (`#[hdk_entry_helper]`, `#[hdk_entry_defs]`, etc). The bindings file will be named `*.types.ts`.
+Bindings will also be generated for public consts that don't have those attributes.
 The serde `rename_all` attribute argument is supported.
 
 All functions marked with holochain attributes `#[hdk_extern]`, except the Holochain callbacks, will be listed in a typescript array to be consumed by Holochain's credential authorizing mechanism. The array will be written in a file named `*.fn.ts`. 

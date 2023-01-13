@@ -10,7 +10,7 @@ impl super::ToTypescript for syn::ItemConst {
     fn ident(&self) -> Ident {self.ident.clone()}
     fn kind(&self) -> &'static str {"const"}
 
-    fn convert_to_ts(self, state: &mut ParseState, debug: bool, uses_typeinterface: bool) {
+    fn convert_to_ts(self, state: &mut ParseState, _debug: bool, uses_typeinterface: bool) {
         // ignore if we aren't in a type interface
         if uses_typeinterface {
             return;
@@ -24,10 +24,12 @@ impl super::ToTypescript for syn::ItemConst {
         // if your lucky you might have also zitsed them but otherwise you will get a typescript error.
 
         let name = self.ident.to_string();
+
+        /** Convert body */
         let body = match self.expr.as_ref() {
             syn::Expr::Lit(literal) => {
                 // convert it directly to a string to put in TS.
-                Some(literal.to_token_stream().to_string())
+                literal.to_token_stream().to_string()
             }
             syn::Expr::Macro(mcr) => {
                 if mcr
@@ -37,31 +39,35 @@ impl super::ToTypescript for syn::ItemConst {
                     .iter()
                     .any(|x| x.to_token_stream().to_string() == "json")
                 {
-                    Some(mcr.mac.tokens.to_string())
+                    mcr.mac.tokens.to_string()
                 } else {
-                    None
+                    println!("#[zits][error] failed to convert const \"{}\". Unhandled Macro expr.", name);
+                    return;
                 }
             }
-            _ => None,
-        };
-        match body {
-            Some(body) => {
-                state.type_defs_output.push_str("\n");
-                let comments = get_comments(&self.attrs);
-                write_comments(&mut state.type_defs_output, &comments, 0);
-                state
-                    .type_defs_output
-                    .push_str(&format!("export const {} = {};", name, body));
-                state.type_defs_output.push_str("\n");
-            }
+            syn::Expr::Binary(_bin) => {
+                println!(
+                    "#[zits][warn] Body of const \"{}\" is copied verbatim to typescript: \"{}\"",
+                    name, self.expr.to_token_stream().to_string(),
+                );
+                self.expr.to_token_stream().to_string()
+            },
             _ => {
-                if debug {
-                    println!(
-                        "#[zits][warn] failed for const {}",
-                        self.to_token_stream().to_string()
-                    );
-                }
-            }
-        }
+                println!(
+                    "#[zits][error] Body of const \"{}\" is of unknown type. \"{}\"",
+                    name, self.expr.to_token_stream().to_string(),
+                );
+                return;
+            },
+        };
+
+        /** Write */
+        state.type_defs_output.push_str("\n");
+        let comments = get_comments(&self.attrs);
+        write_comments(&mut state.type_defs_output, &comments, 0);
+        state
+            .type_defs_output
+            .push_str(&format!("export const {} = {};", name, body));
+        state.type_defs_output.push_str("\n");
     }
 }

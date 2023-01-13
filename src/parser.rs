@@ -3,6 +3,7 @@ use std::fs::File;
 use std::io::Read;
 use std::path::PathBuf;
 use convert_case::{Case, Casing};
+use syn::Visibility;
 use crate::{GenConfig, MAGIC_FIRST_LINE};
 use crate::holochain_imports::{HOD_CORE_TYPES_IMPORTS, HOLOCHAIN_CLIENT_IMPORTS};
 use crate::to_typescript::ToTypescript;
@@ -43,20 +44,23 @@ impl ParseState {
    }
 
    ///
-   fn parse_item<T: ToTypescript>(&mut self, item: T) {
-      /// Must have a zits attributes
-      let has_zits_attribute = has_zits_attribute(&item.attrs());
-      if !has_zits_attribute {
-         if self.config.can_debug {
-            println!("[zits][debug] Encountered non-zits {} \"{}\"", item.kind(), item.ident().to_string());
+   fn parse_item<T: ToTypescript>(&mut self, item: T, is_pub_const: bool) {
+      /// Const only needs the "pub" token
+      if !is_pub_const {
+         /// Must have a zits attributes
+         let has_zits_attribute = has_zits_attribute(&item.attrs());
+         if !has_zits_attribute {
+            if self.config.can_debug {
+               println!("[zits][debug] Encountered non-zits {} \"{}\"", item.kind(), item.ident().to_string());
+            }
+            return;
          }
-         return;
       }
       /// Store item
       if self.config.can_debug {
          println!("[zits][debug] Encountered {} \"{}\"", item.kind(), item.ident().to_string());
       }
-      // TODO: ugly copy
+      // TODO: Fix ugly copy
       let mut new_vec = self.converted_items[item.kind()].clone();
       new_vec.push(item.ident().to_string());
       self.converted_items.insert(item.kind(), new_vec);
@@ -96,11 +100,14 @@ impl ParseState {
 
       for item in syntax.items {
          match item {
-            syn::Item::Const(item) => self.parse_item(item),
-            syn::Item::Struct(item) => self.parse_item(item),
-            syn::Item::Enum(item) => self.parse_item(item),
-            syn::Item::Type(item) => self.parse_item(item),
-            syn::Item::Fn(item) => self.parse_item(item),
+            syn::Item::Const(item) => {
+               let is_pub = if let Visibility::Public(_) = item.vis {true} else {false};
+               self.parse_item(item, is_pub)
+            },
+            syn::Item::Struct(item) => self.parse_item(item, false),
+            syn::Item::Enum(item) => self.parse_item(item, false),
+            syn::Item::Type(item) => self.parse_item(item, false),
+            syn::Item::Fn(item) => self.parse_item(item, false),
             _ => {}
          }
       }
