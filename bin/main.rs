@@ -4,7 +4,7 @@ use structopt::StructOpt;
 const DESCRIPTION: &'static str = env!("CARGO_PKG_DESCRIPTION");
 
 #[derive(Debug, StructOpt, Clone)]
-#[structopt(about = DESCRIPTION, after_help = "This command helps generate typescript bindings for zome code. Compatible with holochain-client-js v0.11.2")]
+#[structopt(about = DESCRIPTION, after_help = "This command helps generate typescript bindings for zome code. Compatible with holochain-client-js v0.11.15")]
 struct Args {
     /// Activate debug mode
     #[structopt(long, help = "Dry-run, prints to stdout", short = "d", long = "debug")]
