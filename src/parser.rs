@@ -194,7 +194,7 @@ export const {zome_name}FunctionNames: FunctionName[] = [
 
 /** Generate tuple array of function names with given zomeName */
 export function generate{pascal_name}ZomeFunctionsArray(zomeName: ZomeName): [ZomeName, FunctionName][] {{
-   let fns: [ZomeName, FunctionName][] = [];
+   const fns: [ZomeName, FunctionName][] = [];
    for (const fn of {zome_name}FunctionNames) {{
       fns.push([zomeName, fn]);
    }}

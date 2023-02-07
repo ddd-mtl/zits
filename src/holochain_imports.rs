@@ -1,5 +1,5 @@
 
-/// from @Holochain/client v0.11.15
+/// from @Holochain/client v0.12.0
 pub const HOLOCHAIN_CLIENT_IMPORTS: &str = "
 import {
 /** types.ts */
