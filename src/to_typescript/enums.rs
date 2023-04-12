@@ -53,7 +53,8 @@ impl super::ToTypescript for syn::ItemEnum {
             if utils::has_attribute_arg("derive", "Serialize_repr", &self.attrs) {
                 make_numeric_enum(self, state, casing, uses_typeinterface)
             } else {
-                make_unit_enum(self, state, casing)
+                make_unit_enum(self.clone(), state, casing);
+                make_unnamed_string_enum(self.clone(), state);
             }
             return;
         }
@@ -123,7 +124,9 @@ fn make_unit_enum(exported_enum: syn::ItemEnum, state: &mut ParseState, casing: 
     }
 
     state.type_defs_output.push_str(";\n");
+
 }
+
 
 /// Numeric enums. These will be converted using enum syntax
 /// ```ignore

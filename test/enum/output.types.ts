@@ -51,9 +51,17 @@ export type ExternalMessage =
  */
 export type Animal =
   | {Dog: null} | {Cat: null};
+export enum AnimalType {
+	Dog = 'Dog',
+	Cat = 'Cat',
+}
 
 export type AnimalTwo =
   | {dog_long_extra: null} | {cat: null};
+export enum AnimalTwoType {
+	DogLongExtra = 'DogLongExtra',
+	Cat = 'Cat',
+}
 
 /** Integer enums should follow rust discrimination if literals (doesn't evaluate expression) */
 enum Foo {
