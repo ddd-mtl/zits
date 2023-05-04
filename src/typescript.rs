@@ -55,12 +55,16 @@ pub fn convert_type(ty: &syn::Type, is_return_type: bool) -> TsType {
                 "XSalsa20Poly1305EncryptedData" => "unknown".to_string().into(),
                 "X25519PubKey" => "Uint8Array".to_string().into(),
                 "SerializedBytes" => "Uint8Array".to_string().into(),
+                "AnyLinkableHash" => "Uint8Array".to_string().into(),
+                "AnyLinkableHashB64" => "Uint8Array".to_string().into(),
                 /// Record
                 "Record" => "HcRecord".to_string().into(),
                 "RecordEntry" => "HcRecordEntry".to_string().into(),
                 /// Date
                 "NaiveDateTime" => "Date".to_string().into(),
-                "DateTime" => "Date".to_string().into(),
+                // "DateTime" => "Date".to_string().into(),
+                "DateTime" => "string".to_string().into(),
+
                 //"()" => "void".to_string().into(),
                 "BTreeMap" => match arguments {
                     syn::PathArguments::Parenthesized(parenthesized_argument) => {

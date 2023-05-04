@@ -181,7 +181,7 @@ import {{ZomeName, FunctionName}} from '@holochain/client';
 
 /** Array of all zome function names in \"{zome_name}\" */
 export const {zome_name}FunctionNames: FunctionName[] = [
-\t\"entry_defs\","
+\t\"entry_defs\", \n\t\"get_zome_info\", \n\t\"get_dna_info\","
          , zome_name = zome_name.to_case(Case::Camel)
       ));
    }

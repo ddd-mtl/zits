@@ -4,11 +4,12 @@ use crate::typescript::convert_type;
 use crate::{utils, ParseState};
 
 
-const HOLOCHAIN_CALLBACKS: [&str; 10] = [
+const HOLOCHAIN_CALLBACKS: [&str; 12] = [
    "init", "entry_defs", "genesis_self_check",
    "post_commit", "recv_remote_signal",
    "validate",  "validate_create_link", "validate_delete_link",
    "migrate_agent_open", "migrate_agent_close",
+   "get_zome_info", "get_dna_info", // Not callbacks, but must also be omitted
 ];
 
 
