@@ -1,5 +1,5 @@
 
-/// from @Holochain/client v0.12.0
+/// from @Holochain/client v0.14.1
 pub const HOLOCHAIN_CLIENT_IMPORTS: &str = "
 import {
 /** types.ts */
@@ -10,6 +10,7 @@ WasmHash,
 EntryHash,
 ActionHash,
 AnyDhtHash,
+ExternalHash,
 KitsuneAgent,
 KitsuneSpace,
 HoloHashB64,
@@ -24,11 +25,12 @@ Signature,
 CellId,
 DnaProperties,
 RoleName,
+InstalledCell,
 Timestamp,
 Duration,
 HoloHashed,
 NetworkInfo,
-FetchQueueInfo,
+FetchPoolInfo,
 /** hdk/action.ts */
 SignedActionHashed,
 ActionHashed,
@@ -48,10 +50,11 @@ Create,
 /** hdk/capabilities.ts */
 CapSecret,
 CapClaim,
+GrantedFunctionsType,
+GrantedFunctions,
 ZomeCallCapGrant,
 CapAccess,
 CapGrant,
-GrantedFunctionsType,
 ///** hdk/countersigning.ts */
 //CounterSigningSessionData,
 //PreflightRequest,
@@ -79,6 +82,8 @@ Record as HcRecord,
 RecordEntry as HcRecordEntry,
 /** api/admin/types.ts */
 InstalledAppInfoStatus,
+DeactivationReason,
+DisabledAppReason,
 StemCell,
 ProvisionedCell,
 ClonedCell,
