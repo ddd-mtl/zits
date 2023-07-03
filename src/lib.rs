@@ -29,6 +29,7 @@ pub struct GenConfig {
 ///
 pub fn generate_typescript_bindings(
     input: Vec<PathBuf>,
+    external_imports: Vec<String>,
     output: PathBuf,
     can_debug: bool,
     can_hc_imports: bool,
@@ -50,6 +51,7 @@ pub fn generate_typescript_bindings(
             uses_typeinterface,
         });
 
+    state.set_external_import_header(external_imports);
 
     let file_name = output.file_stem().unwrap().to_str().unwrap();
     let zome_name: &str = file_name.split(".").collect::<Vec<&str>>()[0];

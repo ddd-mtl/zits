@@ -19,6 +19,7 @@ pub struct ParseState {
    pub zome_fn_names_output: String,
    /// item_kind -> item_ident[]
    pub converted_items: BTreeMap<&'static str, Vec<String>>,
+   pub external_imports_str: String,
 }
 
 
@@ -40,6 +41,7 @@ impl ParseState {
          zome_proxy_output: String::new(),
          zome_fn_names_output: String::new(),
          converted_items,
+         external_imports_str: String::new(),
       }
    }
 
@@ -114,6 +116,38 @@ impl ParseState {
    }
 
 
+   // ///
+   // pub fn set_external_import_header(&mut self, external_imports: Vec<(Vec<String>, String)>) {
+   //    self.external_imports_str = String::new();
+   //    self.external_imports_str.push_str("/** Must be pub or have serde attribute */");
+   //
+   //    for (types, file) in external_imports {
+   //       let mut types_str = String::new();
+   //       for t in types {
+   //          types_str.push_str(&format!("{},", t));
+   //       }
+   //       let str = format!("import {{{}}} from '{}';", types_str, file);
+   //       self.external_imports_str.push_str(&str);
+   //    }
+   //    self.external_imports_str.push_str("\n");
+   // }
+
+
+   ///
+   pub fn set_external_import_header(&mut self, external_imports: Vec<String>) {
+      self.external_imports_str = String::new();
+      if external_imports.is_empty() {
+         return;
+      }
+      self.external_imports_str.push_str("\n/** User defined external dependencies */\n");
+
+      for import in external_imports {
+         self.external_imports_str.push_str(&import);
+      }
+      self.external_imports_str.push_str("\n");
+   }
+
+
    ///
    pub fn write_type_defs_header(&mut self) {
       self.type_defs_output.push_str(&format!("{}\n", MAGIC_FIRST_LINE));
@@ -121,6 +155,7 @@ impl ParseState {
          self.type_defs_output.push_str(HOLOCHAIN_CLIENT_IMPORTS);
          self.type_defs_output.push_str(HOD_CORE_TYPES_IMPORTS);
       }
+      self.type_defs_output.push_str(&self.external_imports_str);
    }
 
 
@@ -151,6 +186,9 @@ impl ParseState {
          self.zome_proxy_output.push_str(HOLOCHAIN_CLIENT_IMPORTS);
          self.zome_proxy_output.push_str(HOD_CORE_TYPES_IMPORTS);
       }
+
+      self.zome_proxy_output.push_str(&self.external_imports_str);
+
 
       self.zome_proxy_output.push_str(&format!("
 import {{ZomeProxy}} from '@ddd-qc/lit-happ';
