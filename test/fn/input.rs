@@ -33,3 +33,10 @@ fn export_playset(ExportPlaysetInput{playset_eh, destination_cell_id}: ExportPla
 fn recv_remote_signal(signal: ExternIO) -> ExternResult<()> {
    Ok(())
 }
+
+
+#[ignore(zits)]
+#[hdk_extern]
+fn unwanted_function(_: ()) -> ExternResult<Vec<Record>> {
+   Ok(vec![])
+}

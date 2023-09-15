@@ -42,3 +42,17 @@ export type FindManifestOutput = FileManifest;
 export type FindOutput = number | null;
 
 export type GetMailOutput = number | string | null;
+
+export interface Link {
+  author: HoloHash
+  target: HoloHash
+  timestamp: Timestamp
+  zome_index: ZomeIndex
+  link_type: LinkType
+  tag: LinkTag
+  create_link_hash: HoloHash
+}
+
+export type LinkTag = number[];
+
+export type LinkType = number;

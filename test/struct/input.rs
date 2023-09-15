@@ -49,3 +49,21 @@ pub struct FindOutput(pub Option<u32>);
 
 #[serde]
 pub struct GetMailOutput(pub Option<Result<u32, String>>);
+
+
+#[hdk_entry_helper]
+pub struct Link {
+    pub author: HoloHash<Agent>,
+    pub target: HoloHash<AnyLinkable>,
+    pub timestamp: Timestamp,
+    pub zome_index: ZomeIndex,
+    pub link_type: LinkType,
+    pub tag: LinkTag,
+    pub create_link_hash: HoloHash<Action>,
+}
+
+#[hdk_entry_helper]
+pub struct LinkTag(pub Vec<u8>);
+
+#[hdk_entry_helper]
+pub struct LinkType(pub u8);

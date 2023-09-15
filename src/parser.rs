@@ -50,10 +50,10 @@ impl ParseState {
       /// Const only needs the "pub" token
       if !is_pub_const {
          /// Must have a zits attributes
-         let has_zits_attribute = has_zits_attribute(&item.attrs());
+         let has_zits_attribute = has_zits_attribute(&item.attrs(), &item.ident().to_string());
          if !has_zits_attribute {
             if self.config.can_debug {
-               println!("[zits][debug] Encountered non-zits {} \"{}\"", item.kind(), item.ident().to_string());
+               println!("[zits][Info] Skipped item {} \"{}\"", item.kind(), item.ident().to_string());
             }
             return;
          }

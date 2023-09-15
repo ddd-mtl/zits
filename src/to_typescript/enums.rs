@@ -20,10 +20,10 @@ impl super::ToTypescript for syn::ItemEnum {
 
 
     ///
-    fn convert_to_ts(self, state: &mut ParseState, _debug: bool, uses_typeinterface: bool) {
-
-        println!("[zits][debug]Converting enum \"{}\" as:", self.ident.to_string());
-
+    fn convert_to_ts(self, state: &mut ParseState, debug: bool, uses_typeinterface: bool) {
+        if debug {
+            println!("[zits][debug] Converting enum \"{}\" as:", self.ident.to_string());
+        }
         /** Tuple structs not allowed as that could mess things up if we do ignore this struct */
         let have_one_unnamed = self.variants.iter().any(|x| {
             if let Fields::Unnamed(_) = x.fields { return true; }
@@ -51,31 +51,31 @@ impl super::ToTypescript for syn::ItemEnum {
 
         if have_all_single {
             if utils::has_attribute_arg("derive", "Serialize_repr", &self.attrs) {
-                make_numeric_enum(self, state, casing, uses_typeinterface)
+                make_numeric_enum(self, state, casing, uses_typeinterface, debug)
             } else {
-                make_unit_enum(self.clone(), state, casing);
-                make_unnamed_string_enum(self.clone(), state);
+                make_unit_enum(self.clone(), state, casing, debug);
+                make_unnamed_string_enum(self.clone(), state, debug);
             }
             return;
         }
 
 
         if /* have_all_unnamed */ have_one_unnamed {
-            make_unnamed_string_enum(self.clone(), state/*, casing*/);
+            make_unnamed_string_enum(self.clone(), state/*, casing*/, debug);
             if let Some(tag_name) = utils::get_attribute_arg("serde", "tag", &self.attrs) {
                 let content_name = utils::get_attribute_arg("serde", "content", &self.attrs)
                    .unwrap_or("content".to_string());
-                make_tagged_unnamed_enum(&tag_name, &content_name, self, state, casing);
+                make_tagged_unnamed_enum(&tag_name, &content_name, self, state, casing, debug);
             } else {
-                make_unnamed_enum(self, state, casing);
+                make_unnamed_enum(self, state, casing, debug);
             }
             return;
         }
 
         if let Some(tag_name) = utils::get_attribute_arg("serde", "tag", &self.attrs) {
-            make_variant_enum(tag_name, self, state, casing)
+            make_variant_enum(tag_name, self, state, casing, debug)
         } else {
-            make_externally_tagged_variant_enum(self, state, casing)
+            make_externally_tagged_variant_enum(self, state, casing, debug)
         }
     }
 }
@@ -105,9 +105,10 @@ impl super::ToTypescript for syn::ItemEnum {
 //     state.type_defs_output.push_str(";\n");
 // }
 
-fn make_unit_enum(exported_enum: syn::ItemEnum, state: &mut ParseState, casing: Option<Case>) {
-    println!("[zits][debug]  - unit enum");
-
+fn make_unit_enum(exported_enum: syn::ItemEnum, state: &mut ParseState, casing: Option<Case>, debug: bool) {
+    if debug {
+        println!("[zits][debug]  - unit enum");
+    }
     state.type_defs_output.push_str(&format!(
         "export type {interface_name} =\n{space}",
         interface_name = exported_enum.ident.to_string(),
@@ -157,9 +158,11 @@ fn make_numeric_enum(
     state: &mut ParseState,
     casing: Option<Case>,
     uses_typeinterface: bool,
+    debug: bool,
 ) {
-    println!("[zits][debug]  - numeric enum");
-
+    if debug {
+        println!("[zits][debug]  - numeric enum");
+    }
     let declare = if uses_typeinterface { "declare " } else { "" };
     state.type_defs_output.push_str(&format!(
         "{declare}enum {interface_name} {{",
@@ -227,9 +230,11 @@ fn make_variant_enum(
     exported_enum: syn::ItemEnum,
     state: &mut ParseState,
     casing: Option<Case>,
+    debug: bool,
 ) {
-    println!("[zits][debug]  - variant enum");
-
+    if debug {
+        println!("[zits][debug]  - variant enum");
+    }
     state.type_defs_output.push_str(&format!(
         "export type {interface_name}{generics} =",
         interface_name = exported_enum.ident.to_string(),
@@ -264,9 +269,11 @@ fn make_externally_tagged_variant_enum(
     exported_enum: syn::ItemEnum,
     state: &mut ParseState,
     casing: Option<Case>,
+    debug: bool,
 ) {
-    println!("[zits][debug]  - externally tagged variant enum");
-
+    if debug {
+        println!("[zits][debug]  - externally tagged variant enum");
+    }
     state.type_defs_output.push_str(&format!(
         "export type {interface_name}{generics} =",
         interface_name = exported_enum.ident.to_string(),
@@ -305,9 +312,10 @@ fn make_externally_tagged_variant_enum(
 
 
 ///
-fn make_unnamed_string_enum(exported_enum: syn::ItemEnum, state: &mut ParseState) {
-    println!("[zits][debug]  - unnamed string enum");
-
+fn make_unnamed_string_enum(exported_enum: syn::ItemEnum, state: &mut ParseState, debug: bool) {
+    if debug {
+        println!("[zits][debug]  - unnamed string enum");
+    }
     state.type_defs_output.push_str(&format!("export enum {}Type {{\n", exported_enum.ident.to_string()));
 
     for variant in exported_enum.variants {
@@ -326,10 +334,12 @@ fn make_tagged_unnamed_enum(
     exported_enum: syn::ItemEnum,
     state: &mut ParseState,
     casing: Option<Case>,
+    debug: bool,
 ) {
     let enum_name = exported_enum.ident.to_string();
-    println!("[zits][debug]  - tagged unnamed enum");
-
+    if debug {
+        println!("[zits][debug]  - tagged unnamed enum");
+    }
     let mut succeeded = true;
     /// write each enum variant as type
     let mut variant_types = Vec::new();
@@ -367,10 +377,11 @@ fn make_tagged_unnamed_enum(
 
 
 ///
-fn make_unnamed_enum(exported_enum: syn::ItemEnum, state: &mut ParseState, casing: Option<Case>) {
+fn make_unnamed_enum(exported_enum: syn::ItemEnum, state: &mut ParseState, casing: Option<Case>, debug: bool) {
     let enum_name = exported_enum.ident.to_string();
-    println!("[zits][debug]  - unnamed enum");
-
+    if debug {
+        println!("[zits][debug]  - unnamed enum");
+    }
     let mut temp = String::new();
     let mut succeeded = true;
     /// write each enum variant as type

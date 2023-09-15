@@ -34,7 +34,7 @@ impl super::ToTypescript for syn::ItemFn {
 
       /// Skip Holochain callbacks
       if HOLOCHAIN_CALLBACKS.contains(&fn_name.as_str()) {
-         println!("[zits][info] Skipping callback '{}()'", fn_name);
+         println!("[zits][info] Skipped callback '{}()'", fn_name);
          return;
       }
 

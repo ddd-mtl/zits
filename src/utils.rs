@@ -28,7 +28,16 @@ const ZITS_NEEDLES: &[&str] = &[
 
 
 ///
-pub fn has_zits_attribute(attributes: &[syn::Attribute]) -> bool {
+pub fn has_zits_attribute(attributes: &[syn::Attribute], item_name: &str) -> bool {
+    /// Skip if item has #[ignore(zits)]
+    if let Some(attr) = get_attribute("ignore", attributes) {
+        //println!("IGNORE attribute found: {:?}", attr.tokens.to_string());
+        if attr.tokens.to_string() == "(zits)" {
+            println!("[zits][Info] Ignored fn \"{}()\"", item_name);
+            return false;
+        }
+    }
+    /// Check for ZITS needles
     let has_attr = attributes
        .iter()
        .any(|attr| {
