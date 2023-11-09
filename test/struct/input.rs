@@ -21,6 +21,14 @@ struct Chapter {
     pages: u32,
 }
 
+/// Test duplicate
+#[hdk_entry_helper]
+struct Chapter {
+    title: String,
+    pages: u32,
+}
+
+
 #[hdk_entry_helper]
 /// Generic struct test
 struct PaginationResult<T> {

@@ -1,4 +1,4 @@
-use std::collections::{BTreeMap};
+use std::collections::{BTreeMap, BTreeSet};
 use std::fs::File;
 use std::io::Read;
 use std::path::PathBuf;
@@ -62,10 +62,15 @@ impl ParseState {
       if self.config.can_debug {
          println!("[zits][debug] Encountered {} \"{}\"", item.kind(), item.ident().to_string());
       }
+
       // TODO: Fix ugly copy
-      let mut new_vec = self.converted_items[item.kind()].clone();
-      new_vec.push(item.ident().to_string());
-      self.converted_items.insert(item.kind(), new_vec);
+      // let mut new_vec = self.converted_items[item.kind()].clone();
+      // new_vec.push(item.ident().to_string());
+      // self.converted_items.insert(item.kind(), new_vec);
+      let mut set: BTreeSet<String> = BTreeSet::from_iter(self.converted_items[item.kind()].iter().cloned());
+      set.insert(item.ident().to_string());
+      self.converted_items.insert(item.kind(), set.into_iter().collect());
+
       /// Parse item
       item.convert_to_ts(self, self.config.can_debug, self.config.uses_typeinterface);
    }

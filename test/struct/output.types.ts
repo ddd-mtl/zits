@@ -23,6 +23,12 @@ export interface Chapter {
   pages: number
 }
 
+/** Test duplicate */
+export interface Chapter {
+  title: string
+  pages: number
+}
+
 /** Generic struct test */
 export interface PaginationResult<T> {
   items: T[]
