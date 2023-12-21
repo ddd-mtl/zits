@@ -53,10 +53,11 @@ pub fn convert_type(ty: &syn::Type, is_return_type: bool) -> TsType {
                 "String" => "string".to_string().into(),
                 // TODO: should be imported from holochain/client instead
                 "XSalsa20Poly1305EncryptedData" => "unknown".to_string().into(),
+                "XSalsa20Poly1305Data" => "Uint8Array".to_string().into(),
                 "X25519PubKey" => "Uint8Array".to_string().into(),
+                "XSalsa20Poly1305KeyRef" => "unknown".to_string().into(),
                 "SerializedBytes" => "Uint8Array".to_string().into(),
-                "AnyLinkableHash" => "Uint8Array".to_string().into(),
-                "AnyLinkableHashB64" => "Uint8Array".to_string().into(),
+                "AnyLinkableHashB64" => "string".to_string().into(),
                 /// Record
                 "Record" => "HcRecord".to_string().into(),
                 "RecordEntry" => "HcRecordEntry".to_string().into(),
