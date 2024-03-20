@@ -62,6 +62,7 @@ impl super::ToTypescript for syn::ItemEnum {
 
         if /* have_all_unnamed */ have_one_unnamed {
             make_unnamed_string_enum(self.clone(), state/*, casing*/, debug);
+            //make_unnamed_enum(self.clone(), state, casing, debug);
             if let Some(tag_name) = utils::get_attribute_arg("serde", "tag", &self.attrs) {
                 let content_name = utils::get_attribute_arg("serde", "content", &self.attrs)
                    .unwrap_or("content".to_string());
@@ -252,7 +253,7 @@ fn make_variant_enum(
         };
         /// add discriminant
         state.type_defs_output.push_str(&format!(
-            "  | {{\n{}{}: \"{}\",\n",
+            "  | {{\n{}{}: {{{}: null}},\n",
             utils::build_indentation(6),
             tag_name,
             field_name,
@@ -321,6 +322,7 @@ fn make_unnamed_string_enum(exported_enum: syn::ItemEnum, state: &mut ParseState
     for variant in exported_enum.variants {
         let field_name = variant.ident.to_string().to_case(Case::Pascal);
         state.type_defs_output.push_str(&format!("\t{field_name} = '{field_name}',\n", field_name = field_name));
+        //state.type_defs_output.push_str(&format!("\t{field_name} = {{{field_name}: null}},\n", field_name = field_name));
     }
 
     state.type_defs_output.push_str("}\n");
@@ -354,7 +356,7 @@ fn make_tagged_unnamed_enum(
             succeeded = false;
             break;
         }
-        variant_types.push(format!("{{{tag_name}: \"{variant_name}\", {content_name}: {variant_type}}}\n",
+        variant_types.push(format!("{{{tag_name}: {{{variant_name}: null}}, {content_name}: {variant_type}}}\n",
             tag_name = tag_name,
             content_name = content_name,
             variant_name = variant_name.to_case(Case::Pascal),

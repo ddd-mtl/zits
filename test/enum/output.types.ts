@@ -8,17 +8,17 @@
 export type Message =
   /** Per Enum case Docs One */
   | {
-      last_precedent: "UnitCaseLeft",
+      last_precedent: {UnitCaseLeft: null},
     }
   /** Per Enum case Docs Two */
   | {
-      last_precedent: "RequestLongTake",
+      last_precedent: {RequestLongTake: null},
       id: string
       method: string
       params: number
     }
   | {
-      last_precedent: "Response",
+      last_precedent: {Response: null},
       id: string
       result: Date
     };
@@ -105,16 +105,16 @@ export enum MessageType {
 	NewEmojiGroup = 'NewEmojiGroup',
 }
 export type Message = 
- | {type: "Ping", content: AgentPubKeyB64}
- | {type: "Pong", content: AgentPubKeyB64}
- | {type: "NewHere", content: HereOutput}
- | {type: "DeleteHere", content: [EntryHashB64, ActionHashB64]}
- | {type: "UpdateHere", content: [number, ActionHashB64, Here]}
- | {type: "NewSession", content: [EntryHashB64, PlacementSession]}
- | {type: "NewSpace", content: EntryHashB64}
- | {type: "NewTemplate", content: EntryHashB64}
- | {type: "NewSvgMarker", content: EntryHashB64}
- | {type: "NewEmojiGroup", content: EntryHashB64}
+ | {type: {Ping: null}, content: AgentPubKeyB64}
+ | {type: {Pong: null}, content: AgentPubKeyB64}
+ | {type: {NewHere: null}, content: HereOutput}
+ | {type: {DeleteHere: null}, content: [EntryHashB64, ActionHashB64]}
+ | {type: {UpdateHere: null}, content: [number, ActionHashB64, Here]}
+ | {type: {NewSession: null}, content: [EntryHashB64, PlacementSession]}
+ | {type: {NewSpace: null}, content: EntryHashB64}
+ | {type: {NewTemplate: null}, content: EntryHashB64}
+ | {type: {NewSvgMarker: null}, content: EntryHashB64}
+ | {type: {NewEmojiGroup: null}, content: EntryHashB64}
 
 
 export enum FakeMessageType {
@@ -124,10 +124,10 @@ export enum FakeMessageType {
 	DeleteHere = 'DeleteHere',
 }
 export type FakeMessage = 
- | {bob: "Ping", marley: AgentPubKeyB64}
- | {bob: "Pong", marley: AgentPubKeyB64}
- | {bob: "NewHere", marley: null}
- | {bob: "DeleteHere", marley: [EntryHashB64, ActionHashB64]}
+ | {bob: {Ping: null}, marley: AgentPubKeyB64}
+ | {bob: {Pong: null}, marley: AgentPubKeyB64}
+ | {bob: {NewHere: null}, marley: null}
+ | {bob: {DeleteHere: null}, marley: [EntryHashB64, ActionHashB64]}
 
 
 export enum MembraneThresholdType {
