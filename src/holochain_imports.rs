@@ -1,7 +1,8 @@
 
-/// from @Holochain/client v0.16.7
+/// from @Holochain/client v0.17.0-dev.7
 pub const HOLOCHAIN_CLIENT_IMPORTS: &str = "
 import {
+WebsocketConnectionOptions,
 /** types.ts */
 HoloHash,
 AgentPubKey,

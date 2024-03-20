@@ -23,6 +23,7 @@ const ZITS_NEEDLES: &[&str] = &[
     "hdk_entry_helper",
     "hdk_extern",
     "hdk_entry_defs",
+    "hdk_entry_types",
     "serde",
 ];
 
