@@ -4,7 +4,7 @@
 
 **Compatible with:**
  - **HDK v0.3.0**
- - **@holochain/client v0.16.7**
+ - **@Holochain/client v0.17.0-dev.7**
  - **@holochain-open-dev/core-types v0.7.0**
  - **@ddd-qc/cell-proxy v0.23.0**
 
