@@ -3,10 +3,10 @@
 <a href="https://crates.io/crates/zits"><img src="https://img.shields.io/crates/v/zits.svg?style=for-the-badge" height="20" alt="License: MIT OR Apache-2.0" /></a>
 
 **Compatible with:**
- - **HDK v0.2.4**
+ - **HDK v0.3.0**
  - **@holochain/client v0.16.7**
  - **@holochain-open-dev/core-types v0.7.0**
- - **@ddd-qc/cell-proxy v0.20.8**
+ - **@ddd-qc/cell-proxy v0.23.0**
 
 
 A utility to generate Typescript bindings for Zome code in Rust (**Z**ome **I**nto **T**ype**S**cript).
@@ -46,6 +46,11 @@ The serde `rename_all` attribute argument is supported.
 All functions marked with holochain attributes `#[hdk_extern]`, except the Holochain callbacks, will be listed in a typescript array to be consumed by Holochain's credential authorizing mechanism. The array will be written in a file named `*.fn.ts`. 
 
 A `ZomeProxy` subclass for [cell-proxy](https://npmjs.org/@ddd-qc/cell-proxy) will be generated in its own file. It will have a method for each function marked with `[hdk_extern]`, excluding the holochain callbacks like `init()` or `validate()`. It will be named after the filename given as output. The file will also have the same name with `*.proxy.ts` as extension.
+
+**Optional Rust Attributes for zome functions**
+
+- `#[ignore(zits)]`: Tells zits to skip this zome function when generating the `ZomeProxy` and function list.
+- `#[feature(zits_blocking)]`: Tells zits to generate a blocking call in the `ZomeProxy` for this zome function.
 
 
 ## Multiple Inputs
