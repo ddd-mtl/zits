@@ -7,8 +7,7 @@ use syn::Visibility;
 use crate::{GenConfig, MAGIC_FIRST_LINE};
 use crate::holochain_imports::{HOD_CORE_TYPES_IMPORTS, HOLOCHAIN_CLIENT_IMPORTS};
 use crate::to_typescript::ToTypescript;
-use crate::utils::has_zits_attribute;
-
+use crate::utils::{has_zits_attribute, has_blocking_attribute};
 
 ///
 pub struct ParseState {
@@ -58,6 +57,9 @@ impl ParseState {
             return;
          }
       }
+
+      let has_blocking_attribute = has_blocking_attribute(&item.attrs(), &item.ident().to_string());
+
       /// Store item
       if self.config.can_debug {
          println!("[zits][debug] Encountered {} \"{}\"", item.kind(), item.ident().to_string());
@@ -72,7 +74,7 @@ impl ParseState {
       self.converted_items.insert(item.kind(), set.into_iter().collect());
 
       /// Parse item
-      item.convert_to_ts(self, self.config.can_debug, self.config.uses_typeinterface);
+      item.convert_to_ts(self, self.config.can_debug, self.config.uses_typeinterface, has_blocking_attribute);
    }
 
 

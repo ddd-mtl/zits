@@ -22,7 +22,8 @@ impl super::ToTypescript for syn::ItemFn {
    fn ident(&self) -> Ident {self.sig.ident.clone()}
    fn kind(&self) -> &'static str {"fn"}
 
-   fn convert_to_ts(self, state: &mut ParseState, _debug: bool, _uses_typeinterface: bool) {
+   ///
+   fn convert_to_ts(self, state: &mut ParseState, _debug: bool, _uses_typeinterface: bool, is_blocking: bool) {
       state.zome_proxy_output.push('\n');
       state.zome_fn_names_output.push('\n');
 
@@ -75,8 +76,11 @@ impl super::ToTypescript for syn::ItemFn {
          , out_name = out_name
       ));
 
+      let call_fn = if is_blocking { "callBlocking" } else { "call" };
+
       state.zome_proxy_output.push_str(&format!(
-             "    return this.call('{fn_name}', {arg_name});\n"
+             "    return this.{call_fn}('{fn_name}', {arg_name});\n"
+             , call_fn = call_fn
              , fn_name = fn_name
              , arg_name = arg_name.to_case(Case::Camel)
       ));

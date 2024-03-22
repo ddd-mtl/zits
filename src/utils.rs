@@ -28,6 +28,18 @@ const ZITS_NEEDLES: &[&str] = &[
 ];
 
 
+/// Check if has #[feature(zits_blocking)]
+pub fn has_blocking_attribute(attributes: &[syn::Attribute], item_name: &str) -> bool {
+    if let Some(attr) = get_attribute("feature", attributes) {
+        if attr.tokens.to_string() == "(zits_blocking)" {
+            println!("[zits][Info] Blocking fn \"{}()\"", item_name);
+            return true;
+        }
+    }
+    false
+}
+
+
 ///
 pub fn has_zits_attribute(attributes: &[syn::Attribute], item_name: &str) -> bool {
     /// Skip if item has #[ignore(zits)]

@@ -20,7 +20,7 @@ impl super::ToTypescript for syn::ItemEnum {
 
 
     ///
-    fn convert_to_ts(self, state: &mut ParseState, debug: bool, uses_typeinterface: bool) {
+    fn convert_to_ts(self, state: &mut ParseState, debug: bool, uses_typeinterface: bool, _is_blocking: bool) {
         if debug {
             println!("[zits][debug] Converting enum \"{}\" as:", self.ident.to_string());
         }

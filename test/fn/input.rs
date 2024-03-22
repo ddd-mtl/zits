@@ -11,6 +11,11 @@ pub fn get_session_from_eh(session_eh: EntryHashB64) -> ExternResult<Option<Plac
    Ok(None)
 }
 
+#[hdk_extern]
+#[feature(zits_blocking)]
+fn create_new_session(input: CreateNextSessionInput) -> ExternResult<(EntryHashB64, u32)> {
+   Ok(("", 42))
+}
 
 #[hdk_extern]
 fn create_next_session(input: CreateNextSessionInput) -> ExternResult<(EntryHashB64, u32)> {

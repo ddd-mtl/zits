@@ -10,6 +10,7 @@ export const outputFunctionNames: FunctionName[] = [
 	"get_dna_info",
 	"export_piece",
 	"get_session_from_eh",
+	"create_new_session",
 	"create_next_session",
 	"get_all_playsets",
 	"export_playset",

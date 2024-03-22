@@ -18,6 +18,10 @@ export class OutputProxy extends ZomeProxy {
     return this.call('get_session_from_eh', sessionEh);
   }
 
+  async createNewSession(input: CreateNextSessionInput): Promise<[EntryHashB64, number]> {
+    return this.callBlocking('create_new_session', input);
+  }
+
   async createNextSession(input: CreateNextSessionInput): Promise<[EntryHashB64, number]> {
     return this.call('create_next_session', input);
   }

@@ -10,7 +10,7 @@ impl super::ToTypescript for syn::ItemConst {
     fn ident(&self) -> Ident {self.ident.clone()}
     fn kind(&self) -> &'static str {"const"}
 
-    fn convert_to_ts(self, state: &mut ParseState, _debug: bool, uses_typeinterface: bool) {
+    fn convert_to_ts(self, state: &mut ParseState, _debug: bool, uses_typeinterface: bool, _is_blocking: bool) {
         // ignore if we aren't in a type interface
         if uses_typeinterface {
             return;
