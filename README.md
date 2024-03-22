@@ -233,13 +233,12 @@ export enum MessageType {
 	DeleteHere = 'DeleteHere',
 	UpdateHere = 'UpdateHere',
 }
-export type Message = 
- | {type: "Ping", content: AgentPubKeyB64}
- | {type: "Pong", content: AgentPubKeyB64}
- | {type: "NewHere", content: HereOutput}
- | {type: "DeleteHere", content: [EntryHashB64, ActionHashB64, ]}
- | {type: "UpdateHere", content: [number, ActionHashB64, Here, ]}
-
+export type Message =
+| {type: {Ping: null}, content: AgentPubKeyB64}
+| {type: {Pong: null}, content: AgentPubKeyB64}
+| {type: {NewHere: null}, content: HereOutput}
+| {type: {DeleteHere: null}, content: [EntryHashB64, ActionHashB64]}
+| {type: {UpdateHere: null}, content: [number, ActionHashB64, Here]}
 
 ```
 
