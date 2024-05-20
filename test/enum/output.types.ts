@@ -8,17 +8,17 @@
 export type Message =
   /** Per Enum case Docs One */
   | {
-      last_precedent: {UnitCaseLeft: null},
+      last_precedent: "UnitCaseLeft",
     }
   /** Per Enum case Docs Two */
   | {
-      last_precedent: {RequestLongTake: null},
+      last_precedent: "RequestLongTake",
       id: string
       method: string
       params: number
     }
   | {
-      last_precedent: {Response: null},
+      last_precedent: "Response",
       id: string
       result: Date
     };
