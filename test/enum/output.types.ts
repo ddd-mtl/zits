@@ -2,21 +2,21 @@
 
 /** test/rust.rs */
 export type SystemSignalProtocolVariantPostCommitStart = {
-  type: "postCommitStart"
+  type: "PostCommitStart"
   entryType: string
 }
 export type SystemSignalProtocolVariantPostCommitEnd = {
-  type: "postCommitEnd"
+  type: "PostCommitEnd"
   entryType: string
   succeeded: boolean
 }
 export type SystemSignalProtocolVariantSelfCallStart = {
-  type: "selfCallStart"
+  type: "SelfCallStart"
   zomeName: string
   fnName: string
 }
 export type SystemSignalProtocolVariantSelfCallEnd = {
-  type: "selfCallEnd"
+  type: "SelfCallEnd"
   zomeName: string
   fnName: string
   succeeded: boolean

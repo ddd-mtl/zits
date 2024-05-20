@@ -254,7 +254,7 @@ fn make_variant_enum(
         let comments = utils::get_comments(&variant.attrs);
         write_comments(&mut state.type_defs_output, &comments, 2);
         state.type_defs_output.push_str(&format!("export type {} = {{\n  {}: \"{}\"\n",
-                               variant_type_name, tag_name, variant_name));
+                               variant_type_name, tag_name, variant.ident.to_string().to_case(Case::Pascal)));
         super::structs::process_fields(variant.fields, state, 2, casing);
         state.type_defs_output.push_str("}\n");
     }
