@@ -1,5 +1,13 @@
 /// test/rust.rs
 
+#[serde(tag="type", rename_all = "camelCase")]
+pub enum SystemSignalProtocol {
+    PostCommitStart {entry_type: String},
+    PostCommitEnd {entry_type: String, succeeded: bool},
+    SelfCallStart {zome_name: String, fn_name: String},
+    SelfCallEnd {zome_name: String, fn_name: String, succeeded: bool},
+}
+
 /// Variants should to discriminated unions
 /// The last serde/attribute combo matching the tag should be taken
 #[derive(Serialize, Deserialize)]

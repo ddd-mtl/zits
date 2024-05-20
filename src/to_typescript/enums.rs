@@ -236,31 +236,44 @@ fn make_variant_enum(
     if debug {
         println!("[zits][debug]  - variant enum");
     }
+
+    ///////
+    let enum_name = exported_enum.ident.to_string();
+    /// write each enum variant as type
+    let mut variant_types = Vec::new();
+    for variant in exported_enum.variants.clone() {
+        let variant_name = if let Some(case) = casing {
+            variant.ident.to_string().to_case(case)
+        } else {
+            variant.ident.to_string()
+        };
+        let variant_type_name = format!("{}Variant{}", enum_name, variant.ident.to_string().to_case(Case::Pascal));
+
+        variant_types.push(variant_type_name.clone());
+
+        let comments = utils::get_comments(&variant.attrs);
+        write_comments(&mut state.type_defs_output, &comments, 2);
+        state.type_defs_output.push_str(&format!("export type {} = {{\n  {}: \"{}\"\n",
+                               variant_type_name, tag_name, variant_name));
+        super::structs::process_fields(variant.fields, state, 2, casing);
+        state.type_defs_output.push_str("}\n");
+    }
+    ///////
+
     state.type_defs_output.push_str(&format!(
         "export type {interface_name}{generics} =",
         interface_name = exported_enum.ident.to_string(),
         generics = utils::extract_struct_generics(exported_enum.generics.clone())
     ));
 
-    for variant in exported_enum.variants {
+    for variant_type_name in variant_types {
         state.type_defs_output.push('\n');
-        let comments = utils::get_comments(&variant.attrs);
-        write_comments(&mut state.type_defs_output, &comments, 2);
-        let field_name = if let Some(casing) = casing {
-            variant.ident.to_string().to_case(casing)
-        } else {
-            variant.ident.to_string()
-        };
-        /// add discriminant
         state.type_defs_output.push_str(&format!(
-            //"  | {{\n{}{}: {{{}: null}},\n",
-            "  | {{\n{}{}: \"{}\",\n",
-            utils::build_indentation(6),
-            tag_name,
-            field_name,
+            "  | {}",
+            variant_type_name
         ));
-        super::structs::process_fields(variant.fields, state, 6, casing);
-        state.type_defs_output.push_str("    }");
+        // super::structs::process_fields(variant.fields, state, 6, casing);
+        // state.type_defs_output.push_str("    }");
     }
     state.type_defs_output.push_str(";\n");
 }
