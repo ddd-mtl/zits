@@ -252,13 +252,8 @@ fn make_variant_enum(
             variant.ident.to_string()
         };
         /// add discriminant
-        // state.type_defs_output.push_str(&format!(
-        //     "  | {{\n{}{}: {{{}: null}},\n",
-        //     utils::build_indentation(6),
-        //     tag_name,
-        //     field_name,
-        // ));
         state.type_defs_output.push_str(&format!(
+            //"  | {{\n{}{}: {{{}: null}},\n",
             "  | {{\n{}{}: \"{}\",\n",
             utils::build_indentation(6),
             tag_name,
