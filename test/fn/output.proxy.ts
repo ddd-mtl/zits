@@ -23,7 +23,7 @@ export class OutputProxy extends ZomeProxy {
   }
 
   async createNewPost(input: CreateNextSessionInput): Promise<[EntryHashB64, number]> {
-    return this.call('create_new_post', input);
+    return this.callZomeBlockPostCommit('BlogPost','create_new_post', input);
   }
 
   async createNextSession(input: CreateNextSessionInput): Promise<[EntryHashB64, number]> {
