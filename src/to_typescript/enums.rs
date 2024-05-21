@@ -20,7 +20,7 @@ impl super::ToTypescript for syn::ItemEnum {
 
 
     ///
-    fn convert_to_ts(self, state: &mut ParseState, debug: bool, uses_typeinterface: bool, _is_blocking: bool) {
+    fn convert_to_ts(self, state: &mut ParseState, debug: bool, uses_typeinterface: bool, _is_blocking: Option<String>) {
         if debug {
             println!("[zits][debug] Converting enum \"{}\" as:", self.ident.to_string());
         }
@@ -242,15 +242,8 @@ fn make_variant_enum(
     /// write each enum variant as type
     let mut variant_types = Vec::new();
     for variant in exported_enum.variants.clone() {
-        let variant_name = if let Some(case) = casing {
-            variant.ident.to_string().to_case(case)
-        } else {
-            variant.ident.to_string()
-        };
         let variant_type_name = format!("{}Variant{}", enum_name, variant.ident.to_string().to_case(Case::Pascal));
-
         variant_types.push(variant_type_name.clone());
-
         let comments = utils::get_comments(&variant.attrs);
         write_comments(&mut state.type_defs_output, &comments, 2);
         state.type_defs_output.push_str(&format!("export type {} = {{\n  {}: \"{}\"\n",

@@ -9,7 +9,7 @@ pub mod fns;
 
 
 pub trait ToTypescript {
-    fn convert_to_ts(self, state: &mut crate::ParseState, debug: bool, uses_typeinterface: bool, is_blocking: bool);
+    fn convert_to_ts(self, state: &mut crate::ParseState, debug: bool, uses_typeinterface: bool, is_blocking: Option<String>);
 
     fn attrs(&self) -> Vec<Attribute>;
 

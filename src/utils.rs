@@ -1,3 +1,4 @@
+use quote::__private::TokenTree;
 use syn::{Attribute, NestedMeta, __private::ToTokens};
 
 
@@ -28,15 +29,31 @@ const ZITS_NEEDLES: &[&str] = &[
 ];
 
 
-/// Check if has #[feature(zits_blocking)]
-pub fn has_blocking_attribute(attributes: &[syn::Attribute], item_name: &str) -> bool {
+/// Check if has #[feature(zits_blocking)] or #[feature(zits_blocking = "BlogPost")]
+pub fn has_blocking_attribute(attributes: &[syn::Attribute], item_name: &str) -> Option<String> {
     if let Some(attr) = get_attribute("feature", attributes) {
-        if attr.tokens.to_string() == "(zits_blocking)" {
-            println!("[zits][Info] Blocking fn \"{}()\"", item_name);
-            return true;
+        for token in attr.tokens.clone().into_iter() {
+            if let TokenTree::Group(group) = token {
+                let stream = group.stream();
+                let tokens: Vec<_> = stream.into_iter().collect();
+                println!("[zits][Info] has_blocking_attribute() token = {:?}", tokens.len());
+                let first = tokens[0].to_string();
+                if tokens.len() == 3
+                && first == "zits_blocking"
+                && tokens[1].to_string() == "=" {
+                    let third = tokens[2].to_string();
+                    let trimmed = &third[1..third.len()-1];
+                    println!("[zits][Info] has_blocking_attribute() tokens = {:?} {:?}", first, trimmed);
+                    return Some(trimmed.to_owned());
+                }
+                if first == "zits_blocking" {
+                    println!("[zits][info] Blocking fn \"{}()\"", item_name);
+                    return Some("".to_string());
+                }
+            }
         }
     }
-    false
+    None
 }
 
 

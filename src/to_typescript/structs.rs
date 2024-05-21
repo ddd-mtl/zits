@@ -12,7 +12,7 @@ impl super::ToTypescript for syn::ItemStruct {
     fn ident(&self) -> Ident {self.ident.clone()}
     fn kind(&self) -> &'static str {"struct"}
 
-    fn convert_to_ts(self, state: &mut ParseState, _debug: bool, _uses_typeinterface: bool, _is_blocking: bool) {
+    fn convert_to_ts(self, state: &mut ParseState, _debug: bool, _uses_typeinterface: bool, _is_blocking: Option<String>) {
         state.type_defs_output.push('\n');
         /// write comments
         let comments = utils::get_comments(&self.attrs);
