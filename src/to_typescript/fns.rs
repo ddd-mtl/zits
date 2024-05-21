@@ -77,12 +77,12 @@ impl super::ToTypescript for syn::ItemFn {
       ));
 
       let mut fn_delimiter = '(';
-      let call_fn = if let Some(entryType) = is_blocking {
-         if entryType == "" {
+      let call_fn = if let Some(entry_type) = is_blocking {
+         if entry_type == "" {
             "callBlocking".to_string()
          } else {
             fn_delimiter = ',';
-            format!("callZomeBlockPostCommit('{}'", entryType)
+            format!("callZomeBlockPostCommit('{}'", entry_type)
          }
       } else {
          "call".to_string()
