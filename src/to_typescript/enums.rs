@@ -360,6 +360,7 @@ fn make_tagged_unnamed_enum(
         };
         let variant_type = get_segment_ident(variant.fields, &enum_name);
         if variant_type.is_err() {
+            println!("{:?}: {}", variant_type.err().unwrap(), variant_name);
             succeeded = false;
             break;
         }
@@ -432,18 +433,15 @@ fn make_unnamed_enum(exported_enum: syn::ItemEnum, state: &mut ParseState, casin
 
 ///
 fn get_segment_ident(fields: Fields, enum_name: &str) -> Result<String, String> {
-
     if let Fields::Unit = fields {
         return Ok("null".to_string());
     }
-
     let Fields::Unnamed(fields) = fields else {
         return Err(format!("[zits][error] variant is not unnamed in enum \"{}\"", enum_name));
     };
     if fields.unnamed.len() != 1 {
         return Err(format!("[zits][error] unnamed variant does not have one field {:?}", fields.unnamed));
     }
-
     return Ok(convert_type(&fields.unnamed[0].ty, false).ts_type);
     // let Path(typed) = fields.unnamed[0].clone().ty else {
     //     return Err(format!("[zits][error] unnamed variant is not of type Path {:?}", fields.unnamed));
