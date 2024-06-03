@@ -53,15 +53,15 @@ impl super::ToTypescript for syn::ItemEnum {
             if utils::has_attribute_arg("derive", "Serialize_repr", &self.attrs) {
                 make_numeric_enum(self, state, casing, uses_typeinterface, debug)
             } else {
-                make_unit_enum(self.clone(), state, casing, debug);
-                make_unnamed_string_enum(self.clone(), state, debug);
+                //make_unit_enum(self.clone(), state, casing, debug);
+                make_unnamed_string_enum(self.clone(), state, "", debug);
             }
             return;
         }
 
 
         if /* have_all_unnamed */ have_one_unnamed {
-            make_unnamed_string_enum(self.clone(), state/*, casing*/, debug);
+            make_unnamed_string_enum(self.clone(), state/*, casing*/, "Type", debug);
             //make_unnamed_enum(self.clone(), state, casing, debug);
             if let Some(tag_name) = utils::get_attribute_arg("serde", "tag", &self.attrs) {
                 let content_name = utils::get_attribute_arg("serde", "content", &self.attrs)
@@ -320,11 +320,11 @@ fn make_externally_tagged_variant_enum(
 
 
 ///
-fn make_unnamed_string_enum(exported_enum: syn::ItemEnum, state: &mut ParseState, debug: bool) {
+fn make_unnamed_string_enum(exported_enum: syn::ItemEnum, state: &mut ParseState, suffix: &str, debug: bool) {
     if debug {
         println!("[zits][debug]  - unnamed string enum");
     }
-    state.type_defs_output.push_str(&format!("export enum {}Type {{\n", exported_enum.ident.to_string()));
+    state.type_defs_output.push_str(&format!("export enum {}{} {{\n", exported_enum.ident.to_string(), suffix));
 
     for variant in exported_enum.variants {
         let field_name = variant.ident.to_string().to_case(Case::Pascal);

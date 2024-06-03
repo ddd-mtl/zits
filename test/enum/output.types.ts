@@ -78,16 +78,12 @@ export type ExternalMessage =
  * even if have explicit numeric annotations
  * There is no case renaming on default
  */
-export type Animal =
-  | {Dog: null} | {Cat: null};
-export enum AnimalType {
+export enum Animal {
 	Dog = 'Dog',
 	Cat = 'Cat',
 }
 
-export type AnimalTwo =
-  | {dog_long_extra: null} | {cat: null};
-export enum AnimalTwoType {
+export enum AnimalTwo {
 	DogLongExtra = 'DogLongExtra',
 	Cat = 'Cat',
 }
