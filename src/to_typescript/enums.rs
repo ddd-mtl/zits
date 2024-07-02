@@ -41,13 +41,14 @@ impl super::ToTypescript for syn::ItemEnum {
 
 
 
-        //let has_entry_types = has_unit_enum_attribute(&self.attrs());
+        /// handle UnitEnum
         if let Some(_unit_enum) = has_unit_enum_attribute(&self.attrs()) {
             let name = &format!("{}UnitEnum", state.config.zome_name.to_case(Case::Pascal));
             make_unnamed_string_enum(self.clone(), &mut state.zome_integrity_output, &name, false, debug);
             //state_str = &mut state.type_defs_output;
         }
 
+        /// has_link_types
         let has_link_types = utils::get_attribute("hdk_link_types", &self.attrs()).is_some();
         let mut state_str = if has_link_types {
             &mut state.zome_integrity_output
@@ -55,19 +56,16 @@ impl super::ToTypescript for syn::ItemEnum {
             &mut state.type_defs_output
         };
 
+        //println!("[zits][debug] enum has_link_types: \"{}\" | {}", self.ident.to_string(), has_link_types);
 
         state_str.push('\n');
 
         let comments = utils::get_comments(&self.attrs);
         write_comments(&mut state_str, &comments, 0);
 
-
         let casing = get_serde_casing(&self.attrs);
 
         let have_all_single = !self.variants.iter().any(|x| x.fields.len() > 0);
-
-
-
         if have_all_single {
             if utils::has_attribute_arg("derive", "Serialize_repr", &self.attrs) {
                 make_numeric_enum(self.clone(), state_str, casing, uses_typeinterface, debug)

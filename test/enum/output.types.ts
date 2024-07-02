@@ -199,3 +199,6 @@ export type ThreadsEntryVariantSemanticTopic = {SemanticTopic: SemanticTopic}
 export type ThreadsEntryVariantParticipationProtocol = {ParticipationProtocol: ParticipationProtocol}
 export type ThreadsEntry = 
  | ThreadsEntryVariantSemanticTopic | ThreadsEntryVariantParticipationProtocol;
+
+export enum TaggingEntry {
+}

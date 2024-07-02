@@ -171,3 +171,20 @@ pub enum ThreadsEntry {
     #[entry_type(required_validations = 3, visibility = "public")]
     ParticipationProtocol(ParticipationProtocol),
 }
+
+
+#[hdk_link_types]
+#[derive(Serialize, Deserialize)]
+pub enum TaggingLinkTypes {
+}
+
+#[hdk_entry_types]
+#[unit_enum(TaggingEntryTypes)]
+pub enum TaggingEntry {
+}
+
+#[hdk_link_types]
+pub enum IntegerLinkType {
+    Default,
+    ToValues,
+}

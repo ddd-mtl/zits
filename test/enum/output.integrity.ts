@@ -17,3 +17,13 @@ export enum OutputUnitEnum {
 	SemanticTopic = 'SemanticTopic',
 	ParticipationProtocol = 'ParticipationProtocol',
 }
+
+export enum OutputLinkType {
+}
+export enum OutputUnitEnum {
+}
+
+export enum OutputLinkType {
+	Default = 'Default',
+	ToValues = 'ToValues',
+}

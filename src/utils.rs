@@ -22,6 +22,7 @@ pub fn write_comments(target_str: &mut String, comments: &[String], indentation_
 
 const ZITS_NEEDLES: &[&str] = &[
     "hdk_entry_helper",
+    "hdk_link_types",
     "hdk_extern",
     "hdk_entry_defs",
     "hdk_entry_types",
