@@ -2,6 +2,7 @@
 
 import {ZomeProxy} from '@ddd-qc/lit-happ';
 import {outputFunctionNames} from './output.fn';
+import {OutputUnitEnum, OutputLinkType} from './output.integrity';
 
 /**
  *
@@ -9,6 +10,8 @@ import {outputFunctionNames} from './output.fn';
 export class OutputProxy extends ZomeProxy {
   static readonly DEFAULT_ZOME_NAME = "output";
   static readonly FN_NAMES = outputFunctionNames;
+  static readonly ENTRY_TYPES = Object.values(OutputUnitEnum);
+  static readonly LINK_TYPES = Object.values(OutputLinkType);
  
   async exportPiece(input: ExportPieceInput): Promise<void> {
     return this.call('export_piece', input);

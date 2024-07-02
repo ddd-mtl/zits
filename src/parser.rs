@@ -213,6 +213,7 @@ impl ParseState {
       self.zome_proxy_output.push_str(&format!("
 import {{ZomeProxy}} from '@ddd-qc/lit-happ';
 import {{{camel_name}FunctionNames}} from './{zome_name}.fn';
+import {{{pascal_name}UnitEnum, {pascal_name}LinkType}} from './{zome_name}.integrity';
 
 /**
  *
@@ -220,14 +221,12 @@ import {{{camel_name}FunctionNames}} from './{zome_name}.fn';
 export class {pascal_name}Proxy extends ZomeProxy {{
   static readonly DEFAULT_ZOME_NAME = \"{default_name}\";
   static readonly FN_NAMES = {camel_name}FunctionNames;
+  static readonly ENTRY_TYPES = Object.values({pascal_name}UnitEnum);
+  static readonly LINK_TYPES = Object.values({pascal_name}LinkType);
  ", pascal_name = zome_name.to_case(Case::Pascal)
- , zome_name = zome_name
-
-                                               ,default_name = default_zome_name 
-                                               ,camel_name = zome_name.to_case(Case::Camel)
+ , zome_name = zome_name, default_name = default_zome_name, camel_name = zome_name.to_case(Case::Camel)
       ));
    }
-
 
 
    ///
