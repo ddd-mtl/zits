@@ -4,7 +4,7 @@ use std::io::Read;
 use std::path::PathBuf;
 use convert_case::{Case, Casing};
 use syn::Visibility;
-use crate::{GenConfig, MAGIC_FIRST_LINE};
+use crate::{GenConfig, MAGIC_FIRST_LINE, utils};
 use crate::holochain_imports::{HOD_CORE_TYPES_IMPORTS, HOLOCHAIN_CLIENT_IMPORTS};
 use crate::to_typescript::ToTypescript;
 use crate::utils::{has_zits_attribute, has_blocking_attribute};
@@ -73,9 +73,14 @@ impl ParseState {
       // self.converted_items.insert(item.kind(), new_vec);
       let mut set: BTreeSet<String> = BTreeSet::from_iter(self.converted_items[item.kind()].iter().cloned());
       set.insert(item.ident().to_string());
-      self.converted_items.insert(item.kind(), set.into_iter().collect());
 
-      /// Parse item
+      /// Add to converted list except integrity link Type
+      let has_link_types = utils::get_attribute("hdk_link_types", &item.attrs()).is_some();
+      if !has_link_types {
+         self.converted_items.insert(item.kind(), set.into_iter().collect());
+      }
+
+      /// Parse item ; TODO: add has_link_types as arg
       item.convert_to_ts(self, self.config.can_debug, self.config.uses_typeinterface, has_blocking_attribute);
    }
 
@@ -208,7 +213,6 @@ impl ParseState {
       }
 
       self.zome_proxy_output.push_str(&self.external_imports_str);
-
 
       self.zome_proxy_output.push_str(&format!("
 import {{ZomeProxy}} from '@ddd-qc/lit-happ';
