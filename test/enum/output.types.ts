@@ -190,3 +190,12 @@ export type DirectMessageProtocolVariantUnknownEntry = {UnknownEntry: null}
 export type DirectMessageProtocolVariantPing = {Ping: null}
 export type DirectMessageProtocol = 
  | DirectMessageProtocolVariantFailure | DirectMessageProtocolVariantSuccess | DirectMessageProtocolVariantMail | DirectMessageProtocolVariantAck | DirectMessageProtocolVariantChunk | DirectMessageProtocolVariantFileManifest | DirectMessageProtocolVariantRequestChunk | DirectMessageProtocolVariantRequestManifest | DirectMessageProtocolVariantUnknownEntry | DirectMessageProtocolVariantPing;
+
+export enum ThreadsEntryType {
+	SemanticTopic = 'SemanticTopic',
+	ParticipationProtocol = 'ParticipationProtocol',
+}
+export type ThreadsEntryVariantSemanticTopic = {SemanticTopic: SemanticTopic}
+export type ThreadsEntryVariantParticipationProtocol = {ParticipationProtocol: ParticipationProtocol}
+export type ThreadsEntry = 
+ | ThreadsEntryVariantSemanticTopic | ThreadsEntryVariantParticipationProtocol;

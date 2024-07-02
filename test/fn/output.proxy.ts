@@ -7,8 +7,8 @@ import {outputFunctionNames} from './output.fn';
  *
  */
 export class OutputProxy extends ZomeProxy {
-  static readonly DEFAULT_ZOME_NAME = "output"
-  static readonly FN_NAMES = outputFunctionNames
+  static readonly DEFAULT_ZOME_NAME = "output";
+  static readonly FN_NAMES = outputFunctionNames;
  
   async exportPiece(input: ExportPieceInput): Promise<void> {
     return this.call('export_piece', input);
@@ -37,5 +37,4 @@ export class OutputProxy extends ZomeProxy {
   async exportPlayset(input: ExportPlaysetInput): Promise<EntryHashB64[]> {
     return this.call('export_playset', input);
   }
-
 }

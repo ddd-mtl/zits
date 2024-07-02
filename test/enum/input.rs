@@ -149,3 +149,25 @@ pub enum DirectMessageProtocol {
     UnknownEntry,
     Ping,
 }
+
+
+#[hdk_link_types]
+#[derive(Serialize, Deserialize)]
+pub enum ThreadsLinkType {
+    Topics,
+    Threads,
+    Favorite,
+    Dm,
+}
+
+
+
+#[derive(Serialize, Deserialize, SerializedBytes, Clone)]
+#[hdk_entry_types]
+#[unit_enum(ThreadsEntryTypes)]
+pub enum ThreadsEntry {
+    #[entry_type(required_validations = 3, visibility = "public")]
+    SemanticTopic(SemanticTopic),
+    #[entry_type(required_validations = 3, visibility = "public")]
+    ParticipationProtocol(ParticipationProtocol),
+}

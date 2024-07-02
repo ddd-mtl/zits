@@ -35,6 +35,12 @@ fn get_all_playsets(_: ()) -> ExternResult<Vec<Record>> {
 }
 
 
+#[ignore(zits)]
+#[hdk_extern]
+fn unwanted_function(_: ()) -> ExternResult<Vec<Record>> {
+   Ok(vec![])
+}
+
 #[hdk_extern]
 fn export_playset(ExportPlaysetInput{playset_eh, destination_cell_id}: ExportPlaysetInput) -> ExternResult<Vec<EntryHashB64>> {
    Ok(vec![])
@@ -43,11 +49,4 @@ fn export_playset(ExportPlaysetInput{playset_eh, destination_cell_id}: ExportPla
 #[hdk_extern]
 fn recv_remote_signal(signal: ExternIO) -> ExternResult<()> {
    Ok(())
-}
-
-
-#[ignore(zits)]
-#[hdk_extern]
-fn unwanted_function(_: ()) -> ExternResult<Vec<Record>> {
-   Ok(vec![])
 }

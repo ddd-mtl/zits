@@ -23,6 +23,7 @@ pub struct GenConfig {
     //can_proxy: bool,
     can_hc_imports: bool,
     uses_typeinterface: bool,
+    zome_name: String,
 }
 
 
@@ -34,6 +35,7 @@ pub fn generate_typescript_bindings(
     can_debug: bool,
     can_hc_imports: bool,
     can_proxy: bool,
+    can_fns: bool,
     maybe_default_zome_name: Option<String>,
 ) {
     let uses_typeinterface = output
@@ -43,16 +45,6 @@ pub fn generate_typescript_bindings(
        .unwrap_or(true);
 
 
-    let mut state: ParseState = ParseState::new(
-        GenConfig {
-            can_debug,
-            //can_proxy,
-            can_hc_imports,
-            uses_typeinterface,
-        });
-
-    state.set_external_import_header(external_imports);
-
     let file_name = output.file_stem().unwrap().to_str().unwrap();
     let zome_name: &str = file_name.split(".").collect::<Vec<&str>>()[0];
     let default_zome_name: String = if let Some(dzn) = maybe_default_zome_name {
@@ -61,10 +53,22 @@ pub fn generate_typescript_bindings(
         zome_name.to_string()
     };
 
+    let mut state: ParseState = ParseState::new(
+        GenConfig {
+            can_debug,
+            //can_proxy,
+            can_hc_imports,
+            uses_typeinterface,
+            zome_name: zome_name.to_string(),
+        });
+
+    state.set_external_import_header(external_imports);
+
     if !can_debug {
         state.write_type_defs_header();
         state.write_zome_fn_names_header(&zome_name);
         if can_proxy { state.write_zome_proxy_header(&zome_name, &default_zome_name); }
+        state.write_zome_integrity_header(&zome_name, &default_zome_name);
     }
 
 
@@ -125,6 +129,8 @@ pub fn generate_typescript_bindings(
         //state.zome_fn_names_output.push_str(&format!("]\n"));
     }
 
+    state.write_zome_integrity_footer(&zome_name, &default_zome_name);
+
     /** */
     if can_debug {
         println!("\n");
@@ -136,16 +142,24 @@ pub fn generate_typescript_bindings(
         println!("======================================");
         println!("{}", state.type_defs_output);
         println!("======================================");
+        ///
+        println!("INTEGRITY TYPES FILE for \"{}\"", zome_name);
+        println!("======================================");
+        println!("{}", state.zome_integrity_output);
+        println!("======================================");
+        ///
         if can_proxy {
             println!("ZomeProxy FILE for \"{}\"", zome_name);
             println!("======================================");
             println!("{}", state.zome_proxy_output);
             println!("======================================");
         }
-        println!("Function Names for \"{}\"", zome_name);
-        println!("======================================");
-        println!("{}", state.zome_fn_names_output);
-        println!("======================================");
+        if can_fns {
+            println!("Function Names for \"{}\"", zome_name);
+            println!("======================================");
+            println!("{}", state.zome_fn_names_output);
+            println!("======================================");
+        }
     } else {
         println!("======================================");
         println!("Bindings generated for \"{}\"", zome_name);
@@ -196,8 +210,18 @@ pub fn generate_typescript_bindings(
             println!("Types file not generated as no types have been found.");
         }
 
+        /// Integrity file
+        let mut integrity_output: PathBuf = output.clone();
+        integrity_output.set_file_name(format!("{}.integrity.ts", zome_name));
+        //println!("ProxyFile: {:?}", proxy_output);
+        let mut proxy_file: File = File::create(&integrity_output).expect("Unable to write to file");
+        match proxy_file.write_all(state.zome_integrity_output.as_bytes()) {
+            Ok(_) => println!("Successfully generated Integrity: {:#?}", integrity_output),
+            Err(_) => println!("Failed to generate Integrity, an error occurred."),
+        }
+
+        /// Proxy file
         if can_proxy {
-            /// Proxy file
             let mut proxy_output: PathBuf = output.clone();
             proxy_output.set_file_name(format!("{}.proxy.ts", zome_name));
             //println!("ProxyFile: {:?}", proxy_output);
@@ -209,17 +233,19 @@ pub fn generate_typescript_bindings(
         }
 
         /// FnNames file
-        if count_fn > 0 {
-            let mut fn_output: PathBuf = output.clone();
-            fn_output.set_file_name(format!("{}.fn.ts", zome_name));
-            //println!("ProxyFile: {:?}", proxy_output);
-            let mut fn_file: File = File::create(&fn_output).expect("Unable to write to file");
-            match fn_file.write_all(state.zome_fn_names_output.as_bytes()) {
-                Ok(_) => println!("Successfully generated FnNames: {:#?}", fn_output),
-                Err(_) => println!("Failed to generate FnNames, an error occurred."),
+        if can_fns {
+            if count_fn > 0 {
+                let mut fn_output: PathBuf = output.clone();
+                fn_output.set_file_name(format!("{}.fn.ts", zome_name));
+                //println!("ProxyFile: {:?}", proxy_output);
+                let mut fn_file: File = File::create(&fn_output).expect("Unable to write to file");
+                match fn_file.write_all(state.zome_fn_names_output.as_bytes()) {
+                    Ok(_) => println!("Successfully generated FnNames: {:#?}", fn_output),
+                    Err(_) => println!("Failed to generate FnNames, an error occurred."),
+                }
+            } else {
+                println!("FnNames file not generated as no functions have been found");
             }
-        } else {
-            println!("FnNames file not generated as no functions have been found");
         }
     }
 

@@ -54,7 +54,7 @@ impl super::ToTypescript for syn::ItemStruct {
             name,
             utils::extract_struct_generics(self.generics.clone())
         ));
-        process_fields(self.fields, state, 2, casing);
+        process_fields(self.fields, &mut state.type_defs_output, 2, casing);
         /// Write normal struct end
         state.type_defs_output.push_str("}\n");
     }
@@ -62,13 +62,13 @@ impl super::ToTypescript for syn::ItemStruct {
 
 
 ///
-pub fn process_fields(fields: syn::Fields, state: &mut ParseState, indentation_amount: i8, casing: Option<Case>) {
+pub fn process_fields(fields: syn::Fields, state_str: &mut String, indentation_amount: i8, casing: Option<Case>) {
     //println!("\n process_fields(): {:?}", fields);
     let space = utils::build_indentation(indentation_amount);
     for field in fields {
         /// Write comments
         let comments = utils::get_comments(&field.attrs);
-        write_comments(&mut state.type_defs_output, &comments, 2);
+        write_comments(state_str, &comments, 2);
         /// Get field name
         let mut field_name = field.ident.clone()
            .expect(&format!("Field should have ident: {:?}", field))
@@ -79,7 +79,7 @@ pub fn process_fields(fields: syn::Fields, state: &mut ParseState, indentation_a
         /// Convert field type
         let field_type = convert_type(&field.ty, false);
         /// Write field
-        state.type_defs_output.push_str(&format!(
+        state_str.push_str(&format!(
             "{space}{field_name}{optional_parameter_token}: {field_type}\n",
             space = space,
             field_name = field_name,

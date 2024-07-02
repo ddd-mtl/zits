@@ -24,6 +24,13 @@ struct Args {
     )]
     no_proxy: bool,
 
+    ///
+    #[structopt(
+        long = "no-fn",
+        help = "Do not generate FunctionNames",
+    )]
+    no_fn: bool,
+
     /// zome-name
     #[structopt(
     long = "--default-zome-name",
@@ -68,5 +75,5 @@ fn main() {
         args.output,
         args.debug,
         !args.no_hc_imports,
-        !args.no_proxy, args.zome_name);
+        !args.no_proxy, !args.no_fn, args.zome_name);
 }

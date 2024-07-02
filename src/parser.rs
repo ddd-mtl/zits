@@ -15,6 +15,7 @@ pub struct ParseState {
    pub unprocessed_files: Vec<PathBuf>,
    pub type_defs_output: String,
    pub zome_proxy_output: String,
+   pub zome_integrity_output: String,
    pub zome_fn_names_output: String,
    /// item_kind -> item_ident[]
    pub converted_items: BTreeMap<&'static str, Vec<String>>,
@@ -38,6 +39,7 @@ impl ParseState {
          unprocessed_files: Vec::<PathBuf>::new(),
          type_defs_output: String::new(),
          zome_proxy_output: String::new(),
+         zome_integrity_output: String::new(),
          zome_fn_names_output: String::new(),
          converted_items,
          external_imports_str: String::new(),
@@ -187,6 +189,17 @@ impl ParseState {
 
 
    ///
+   pub fn write_zome_integrity_header(&mut self, zome_name: &str, default_zome_name: &str) {
+      self.zome_integrity_output.push_str(&format!("{}\n\n", MAGIC_FIRST_LINE));
+      //self.zome_integrity_output.push_str(&format!("import {{{camel_name}FunctionNames}} from './{zome_name}.types';"));
+   }
+   ///
+   pub fn write_zome_integrity_footer(&mut self, zome_name: &str, default_zome_name: &str) {
+      // N/A
+   }
+
+
+   ///
    pub fn write_zome_proxy_header(&mut self, zome_name: &str, default_zome_name: &str) {
       self.zome_proxy_output.push_str(&format!("{}\n", MAGIC_FIRST_LINE));
       if self.config.can_hc_imports {
@@ -205,8 +218,8 @@ import {{{camel_name}FunctionNames}} from './{zome_name}.fn';
  *
  */
 export class {pascal_name}Proxy extends ZomeProxy {{
-  static readonly DEFAULT_ZOME_NAME = \"{default_name}\"
-  static readonly FN_NAMES = {camel_name}FunctionNames
+  static readonly DEFAULT_ZOME_NAME = \"{default_name}\";
+  static readonly FN_NAMES = {camel_name}FunctionNames;
  ", pascal_name = zome_name.to_case(Case::Pascal)
  , zome_name = zome_name
 
@@ -234,7 +247,7 @@ export const {zome_name}FunctionNames: FunctionName[] = [
 
       ///
       pub fn write_zome_fn_names_footer(&mut self, zome_name: &str, default_zome_name: &str) {
-         self.zome_fn_names_output.push_str(&format!("];
+         self.zome_fn_names_output.push_str(&format!("\n];
 
 
 /** Generate tuple array of function names with given zomeName */
