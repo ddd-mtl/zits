@@ -28,15 +28,17 @@ const ZITS_NEEDLES: &[&str] = &[
     "serde",
 ];
 
+
+///
 pub fn has_unit_enum_attribute(attributes: &[syn::Attribute]) -> Option<String> {
     if let Some(attr) = crate::utils::get_attribute("unit_enum", attributes) {
-        println!("unit_enum() attr = {:?}", attr.tokens);
+        //println!("unit_enum() attr = {:?}", attr.tokens);
         for token in attr.tokens.clone().into_iter() {
             if let TokenTree::Group(group) = token {
                 let stream = group.stream();
                 let tokens: Vec<_> = stream.into_iter().collect();
                 let first = tokens[0].to_string();
-                println!("unit_enum() token.first = {}", first);
+                //println!("unit_enum() token.first = {}", first);
                 return Some(first);
             }
         }

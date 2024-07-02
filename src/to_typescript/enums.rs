@@ -1,6 +1,5 @@
 use crate::{utils, ParseState};
 use convert_case::{Case, Casing};
-use quote::__private::TokenTree;
 use syn::__private::ToTokens;
 use syn::{Attribute, Fields, Ident};
 //use syn::Type::Path;

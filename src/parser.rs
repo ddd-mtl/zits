@@ -189,12 +189,12 @@ impl ParseState {
 
 
    ///
-   pub fn write_zome_integrity_header(&mut self, zome_name: &str, default_zome_name: &str) {
+   pub fn write_zome_integrity_header(&mut self, _zome_name: &str, _default_zome_name: &str) {
       self.zome_integrity_output.push_str(&format!("{}\n\n", MAGIC_FIRST_LINE));
       //self.zome_integrity_output.push_str(&format!("import {{{camel_name}FunctionNames}} from './{zome_name}.types';"));
    }
    ///
-   pub fn write_zome_integrity_footer(&mut self, zome_name: &str, default_zome_name: &str) {
+   pub fn write_zome_integrity_footer(&mut self, _zome_name: &str, _default_zome_name: &str) {
       // N/A
    }
 
