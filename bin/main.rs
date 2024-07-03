@@ -31,6 +31,14 @@ struct Args {
     )]
     no_fn: bool,
 
+    ///
+    #[structopt(
+        short = "f",
+        long = "fn",
+        help = "Add function name",
+    )]
+    fns: Vec<String>,
+
     /// zome-name
     #[structopt(
     long = "--default-zome-name",
@@ -75,5 +83,8 @@ fn main() {
         args.output,
         args.debug,
         !args.no_hc_imports,
-        !args.no_proxy, !args.no_fn, args.zome_name);
+        !args.no_proxy,
+        !args.no_fn,
+        args.fns,
+        args.zome_name);
 }

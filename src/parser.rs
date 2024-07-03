@@ -249,7 +249,12 @@ export const {zome_name}FunctionNames: FunctionName[] = [
 
 
       ///
-      pub fn write_zome_fn_names_footer(&mut self, zome_name: &str, default_zome_name: &str) {
+      pub fn write_zome_fn_names_footer(&mut self,  external_fns: Vec<String>, zome_name: &str, default_zome_name: &str) {
+
+         for external_fn in external_fns {
+            self.zome_fn_names_output.push_str(&format!("\n\t\"{}\",", external_fn));
+         }
+
          self.zome_fn_names_output.push_str(&format!("\n];
 
 

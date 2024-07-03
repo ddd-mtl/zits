@@ -36,6 +36,7 @@ pub fn generate_typescript_bindings(
     can_hc_imports: bool,
     can_proxy: bool,
     can_fns: bool,
+    external_fns: Vec<String>,
     maybe_default_zome_name: Option<String>,
 ) {
     let uses_typeinterface = output
@@ -124,9 +125,8 @@ pub fn generate_typescript_bindings(
         state.zome_proxy_output.push_str(&format!("}}\n"));
         /// Append type imports to ZomeProxy
         state.write_type_defs_import(&zome_name);
-        /// ZomeFnNames file footer
-        state.write_zome_fn_names_footer(&zome_name, &default_zome_name);
-        //state.zome_fn_names_output.push_str(&format!("]\n"));
+        /// Fn footer
+        state.write_zome_fn_names_footer(external_fns, &zome_name, &default_zome_name);
     }
 
     state.write_zome_integrity_footer(&zome_name, &default_zome_name);

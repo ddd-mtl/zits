@@ -15,6 +15,8 @@ export const outputFunctionNames: FunctionName[] = [
 	"create_next_session",
 	"get_all_playsets",
 	"export_playset",
+	"cast_tip",
+	"pull_inbox",
 ];
 
 
