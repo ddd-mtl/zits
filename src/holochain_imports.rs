@@ -126,12 +126,12 @@ ZomeLocation,
 
 
 /// Simple Hashes
-export type AgentArray = Uint8Array;
-export type DnaArray = Uint8Array;
-export type WasmArray = Uint8Array;
-export type EntryArray = Uint8Array;
-export type ActionArray = Uint8Array;
-export type AnyDhtArray = Uint8Array;
+type AgentArray = Uint8Array;
+type DnaArray = Uint8Array;
+type WasmArray = Uint8Array;
+type EntryArray = Uint8Array;
+type ActionArray = Uint8Array;
+type AnyDhtArray = Uint8Array;
 ";
 
 
