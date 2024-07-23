@@ -59,6 +59,14 @@ pub fn convert_type(ty: &syn::Type, is_return_type: bool) -> TsType {
                 "SerializedBytes" => "Uint8Array".to_string().into(),
                 "AppEntryBytes" => "Uint8Array".to_string().into(),
                 "AnyLinkableHashB64" => "string".to_string().into(),
+                /// HoloHash
+                "HoloHash" => "HoloArray".to_string().into(),
+                "AgentPubKey" => "AgentArray".to_string().into(),
+                "WasmHash" => "WasmArray".to_string().into(),
+                "EntryHash" => "EntryArray".to_string().into(),
+                "ActionHash" => "ActionArray".to_string().into(),
+                "AnyDhtHash" => "AnyDhtArray".to_string().into(),
+                "ExternalHash" => "ExternalArray".to_string().into(),
                 /// Record
                 "Record" => "HcRecord".to_string().into(),
                 "RecordEntry" => "HcRecordEntry".to_string().into(),

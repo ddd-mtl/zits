@@ -50,13 +50,13 @@ export type FindOutput = number | null;
 export type GetMailOutput = number | string | null;
 
 export interface Link {
-  author: HoloHash
-  target: HoloHash
+  author: HoloArray
+  target: HoloArray
   timestamp: Timestamp
   zome_index: ZomeIndex
   link_type: LinkType
   tag: LinkTag
-  create_link_hash: HoloHash
+  create_link_hash: HoloArray
 }
 
 export type LinkTag = number[];

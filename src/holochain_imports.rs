@@ -4,14 +4,14 @@ pub const HOLOCHAIN_CLIENT_IMPORTS: &str = "
 import {
 WebsocketConnectionOptions,
 /** types.ts */
-HoloHash,
-AgentPubKey,
-DnaHash,
-WasmHash,
-EntryHash,
-ActionHash,
-AnyDhtHash,
-ExternalHash,
+//HoloHash,
+//AgentPubKey,
+//DnaHash,
+//WasmHash,
+//EntryHash,
+//ActionHash,
+//AnyDhtHash,
+//ExternalHash,
 KitsuneAgent,
 KitsuneSpace,
 HoloHashB64,
@@ -123,6 +123,15 @@ AppBundleSource,
 NetworkSeed,
 ZomeLocation,
    } from '@holochain/client';
+
+
+/// Simple Hashes
+export type AgentArray = Uint8Array;
+export type DnaArray = Uint8Array;
+export type WasmArray = Uint8Array;
+export type EntryArray = Uint8Array;
+export type ActionArray = Uint8Array;
+export type AnyDhtArray = Uint8Array;
 ";
 
 
