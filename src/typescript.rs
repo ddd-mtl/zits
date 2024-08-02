@@ -66,6 +66,8 @@ pub fn convert_type(ty: &syn::Type, is_return_type: bool) -> TsType {
                 "EntryHash" => "EntryArray".to_string().into(),
                 "ActionHash" => "ActionArray".to_string().into(),
                 "AnyDhtHash" => "AnyDhtArray".to_string().into(),
+                "AnyLinkableHash" => "AnyLinkableArray".to_string().into(),
+                "DnaHash" => "DnaArray".to_string().into(),
                 "ExternalHash" => "ExternalArray".to_string().into(),
                 /// Record
                 "Record" => "HcRecord".to_string().into(),
