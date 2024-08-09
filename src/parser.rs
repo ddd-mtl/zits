@@ -153,7 +153,7 @@ impl ParseState {
       if external_imports.is_empty() {
          return;
       }
-      self.external_imports_str.push_str("\n/** User defined external dependencies */\n");
+      self.external_imports_str.push_str("\n/** User defined external dependencies */\n// @ts-ignore\n");
 
       for import in external_imports {
          self.external_imports_str.push_str(&import);
@@ -189,7 +189,7 @@ impl ParseState {
       }
       self.zome_proxy_output.insert_str(
          MAGIC_FIRST_LINE.len() + 1,
-         &format!("\nimport {{{}}} from './{}.types';", all_types, zome_name));
+         &format!("\n// @ts-ignore\nimport {{{}}} from './{}.types';", all_types, zome_name));
    }
 
 
@@ -223,10 +223,10 @@ import {{{pascal_name}UnitEnum, {pascal_name}LinkType}} from './{zome_name}.inte
  *
  */
 export class {pascal_name}Proxy extends ZomeProxy {{
-  static readonly DEFAULT_ZOME_NAME = \"{default_name}\";
-  static readonly FN_NAMES = {camel_name}FunctionNames;
-  static readonly ENTRY_TYPES = Object.values({pascal_name}UnitEnum);
-  static readonly LINK_TYPES = Object.values({pascal_name}LinkType);
+  static override readonly DEFAULT_ZOME_NAME = \"{default_name}\";
+  static override readonly FN_NAMES = {camel_name}FunctionNames;
+  static override readonly ENTRY_TYPES = Object.values({pascal_name}UnitEnum);
+  static override readonly LINK_TYPES = Object.values({pascal_name}LinkType);
  ", pascal_name = zome_name.to_case(Case::Pascal)
  , zome_name = zome_name, default_name = default_zome_name, camel_name = zome_name.to_case(Case::Camel)
       ));
