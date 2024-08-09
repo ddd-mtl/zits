@@ -1,6 +1,7 @@
 
 /// from @Holochain/client v0.17.0-dev.7
 pub const HOLOCHAIN_CLIENT_IMPORTS: &str = "
+// @ts-ignore
 import {
 // @ts-ignore
 WebsocketConnectionOptions, KitsuneAgent, KitsuneSpace, HoloHashB64, AgentPubKeyB64, DnaHashB64, WasmHashB64, EntryHashB64, ActionHashB64, AnyDhtHashB64, InstalledAppId, Signature, CellId, DnaProperties, RoleName, InstalledCell, Timestamp, Duration, HoloHashed, NetworkInfo, FetchPoolInfo,
@@ -59,6 +60,7 @@ type ExternalArray = Uint8Array;
 
 /// from @Holochain-open-dev/core-types v0.7.0
 pub const HOD_CORE_TYPES_IMPORTS: &str = "
+// @ts-ignore
 import {
 /** Common */
 // @ts-ignore
