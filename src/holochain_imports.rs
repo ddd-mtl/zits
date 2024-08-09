@@ -24,7 +24,8 @@ CapSecret, CapClaim, GrantedFunctionsType, GrantedFunctions, ZomeCallCapGrant, C
 // @ts-ignore
 DhtOpType, DhtOp, getDhtOpType, getDhtOpAction, getDhtOpEntry, getDhtOpSignature,
 /** hdk/entry.ts */
-// @ts-ignore EntryVisibility, AppEntryDef, EntryType, EntryContent, Entry,
+// @ts-ignore
+EntryVisibility, AppEntryDef, EntryType, EntryContent, Entry,
 /** hdk/record.ts */
 // @ts-ignore
 Record as HcRecord, RecordEntry as HcRecordEntry,
