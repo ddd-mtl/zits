@@ -76,10 +76,13 @@ pub fn has_blocking_attribute(attributes: &[syn::Attribute], item_name: &str) ->
 
 ///
 pub fn has_zits_attribute(attributes: &[syn::Attribute], item_name: &str) -> bool {
-    /// Skip if item has #[ignore(zits)]
+    /// Skip if item has #[ignore(zits)] or #[ignore = "zits" ]
     if let Some(attr) = get_attribute("ignore", attributes) {
-        //println!("IGNORE attribute found: {:?}", attr.tokens.to_string());
-        if attr.tokens.to_string() == "(zits)" {
+        println!("IGNORE attribute found: {:?}", attr.tokens.to_string());
+        if attr.tokens.to_string() == "(zits)" 
+        || attr.tokens.to_string() == "= \"zits\""  
+        || attr.tokens.to_string() ==  "zits"
+        {
             println!("[zits][Info] Ignored fn \"{}()\"", item_name);
             return false;
         }
