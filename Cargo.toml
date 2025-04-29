@@ -1,9 +1,9 @@
 [package]
 name = "zits"
 description = "Generate typescript bindings for zome code in Rust."
-version = "1.16.3"
+version = "1.16.4"
 edition = "2021"
-rust-version = "1.65.0"
+rust-version = "1.75.0"
 repository = "https://github.com/ddd-mtl/zits/"
 readme = "README.md"
 license = "MIT OR Apache-2.0"

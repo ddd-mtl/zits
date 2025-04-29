@@ -1,3 +1,4 @@
+REM MAKE SURE TEST IS RUN FROM REPO ROOT DIR
 cargo run -- --no-proxy --no-hc-imports -d "import {ItemLink} from '../deps.types';" -i test\\const\\input.rs -o test\\const\\output.ts
 cargo run -- --no-proxy --no-hc-imports -i test\\struct\\input.rs -o test\\struct\\output.ts
 cargo run -- --no-proxy --default-zome-name useless -i test\\type\\input.rs -o test\\type\\output.ts

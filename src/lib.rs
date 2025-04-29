@@ -213,7 +213,7 @@ pub fn generate_typescript_bindings(
         /// Integrity file
         let mut integrity_output: PathBuf = output.clone();
         integrity_output.set_file_name(format!("{}.integrity.ts", zome_name));
-        //println!("ProxyFile: {:?}", proxy_output);
+        //println!("integrity_output: {:?}", integrity_output);
         let mut proxy_file: File = File::create(&integrity_output).expect("Unable to write to file");
         match proxy_file.write_all(state.zome_integrity_output.as_bytes()) {
             Ok(_) => println!("Successfully generated Integrity: {:#?}", integrity_output),
