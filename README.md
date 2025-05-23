@@ -3,8 +3,8 @@
 <a href="https://crates.io/crates/zits"><img src="https://img.shields.io/crates/v/zits.svg?style=for-the-badge" height="20" alt="License: MIT OR Apache-2.0" /></a>
 
 **Compatible with:**
- - **HDK v0.3.0**
- - **@Holochain/client v0.17.0-dev.7**
+ - **HDK v0.5.x**
+ - **@Holochain/client v0.18.x**
  - **@holochain-open-dev/core-types v0.7.0**
  - **@ddd-qc/cell-proxy v0.23.0**
 
