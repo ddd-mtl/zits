@@ -4,8 +4,8 @@ pub const HOLOCHAIN_CLIENT_IMPORTS: &str = "
 // @ts-ignore
 import {
 /** api/common.ts */
-WebsocketConnectionOptions, WsClientOptions, HolochainError, CloneIdHelper,
 // @ts-ignore
+WebsocketConnectionOptions, WsClientOptions, HolochainError, CloneIdHelper,
 /** types.ts */
 // @ts-ignore
 KitsuneAgent, KitsuneSpace, HoloHashB64, AgentPubKeyB64, DnaHashB64, WasmHashB64, EntryHashB64, ActionHashB64, AnyDhtHashB64, InstalledAppId, Signature, CellId, DnaProperties, RoleName, InstalledCell, Timestamp, Duration, HoloHashed, FetchPoolInfo,
