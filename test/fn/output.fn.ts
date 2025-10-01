@@ -14,6 +14,7 @@ export const outputFunctionNames: FunctionName[] = [
 	"create_new_post",
 	"create_next_session",
 	"get_all_playsets",
+	"no_arg",
 	"export_playset",
 	"cast_tip",
 	"pull_inbox",

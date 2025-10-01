@@ -34,6 +34,10 @@ fn get_all_playsets(_: ()) -> ExternResult<Vec<Record>> {
    Ok(vec![])
 }
 
+#[hdk_extern]
+fn no_arg() -> ExternResult<Vec<Record>> {
+    Ok(vec![])
+}
 
 #[ignore(zits)]
 #[hdk_extern]

@@ -1,0 +1,7 @@
+edition = "2021"
+style_edition = "2024"
+
+tab_spaces = 3 # Helps save screen space and keep code below max_width
+match_block_trailing_comma = true
+merge_derives = false
+max_width = 120 # fits dual editor window on 24"

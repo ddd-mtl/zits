@@ -39,6 +39,10 @@ export class OutputProxy extends ZomeProxy {
     return this.call('get_all_playsets', null);
   }
 
+  async noArg(): Promise<HcRecord[]> {
+    return this.call('no_arg', null);
+  }
+
   async exportPlayset(input: ExportPlaysetInput): Promise<EntryHashB64[]> {
     return this.call('export_playset', input);
   }

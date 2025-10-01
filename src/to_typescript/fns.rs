@@ -34,44 +34,39 @@ impl super::ToTypescript for syn::ItemFn {
          println!("[zits][info] Skipped callback '{}()'", fn_name);
          return;
       }
-      /// Make sure fn has Return type and one arguments
+      /// Make sure fn has Return type and at least one argument
       let ReturnType::Type(_arrow, out_type) = self.sig.output else {
          eprintln!("Failed to determine return type for function '{}()'", fn_name);
          return;
       };
       let out_name = convert_type(&out_type, true).ts_type;
-      let first_arg = self.sig.inputs.first().unwrap();
-      //println!("first_arg = {:?}", first_arg);
-      let FnArg::Typed(patty) = first_arg else {
-         eprintln!("Failed to determine first argument type for function '{}()'", fn_name);
-         return;
-      };
 
       state.zome_proxy_output.push('\n');
       state.zome_fn_names_output.push('\n');
 
-      //println!("\n\npatty.{} = {:?}", fn_name, patty);
-      let arg_name = match *patty.clone().pat {
-         Pat::Ident(pat_ident) => pat_ident.ident.to_string(),
-         Pat::Struct(_) => "input".to_string(),
-         _ => "null".to_string()
-      };
+      let mut arg_name = "null".to_string();
+      let arg = if let Some(FnArg::Typed(patty)) = self.sig.inputs.first() {
+          //println!("\n\npatty.{} = {:?}", fn_name, patty);
+          arg_name = match *patty.clone().pat {
+              Pat::Ident(pat_ident) => pat_ident.ident.to_string(),
+              Pat::Struct(_) => "input".to_string(),
+              _ => "null".to_string()
+          };
 
-      //let arg_name = "arg_name";
-      let arg_type = convert_type(&patty.ty, false).ts_type;
+          //let arg_name = "arg_name";
+          let arg_type = convert_type(&patty.ty, false).ts_type;
 
-      let arg = if let Pat::Wild(_) = *patty.pat {
-         "".to_string()
-      } else {
-         format!("{}: {}", arg_name.to_case(Case::Camel), arg_type)
-      };
+          if let Pat::Wild(_) = *patty.pat {
+              "".to_string()
+          } else {
+              format!("{}: {}", arg_name.to_case(Case::Camel), arg_type)
+          }
+      } else { "".to_string() };
 
       state.zome_proxy_output.push_str(&format!(
          "  async {fn_name}{generics}({arg}): {out_name} {{\n"
          , fn_name = fn_name.to_case(Case::Camel)
          , generics = utils::extract_struct_generics(self.sig.generics.clone())
-         , arg = arg
-         , out_name = out_name
       ));
 
       let mut fn_delimiter = '(';
@@ -88,9 +83,6 @@ impl super::ToTypescript for syn::ItemFn {
 
       state.zome_proxy_output.push_str(&format!(
              "    return this.{call_fn}{fn_delimiter}'{fn_name}', {arg_name});\n"
-             , fn_delimiter = fn_delimiter
-             , call_fn = call_fn
-             , fn_name = fn_name
              , arg_name = arg_name.to_case(Case::Camel)
       ));
 
