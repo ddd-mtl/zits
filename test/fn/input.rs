@@ -1,4 +1,15 @@
 
+#[hdk_extern]
+pub fn get_agent_profile(input: ZomeFnInput<AgentPubKey>) -> ExternResult<Option<Record>> {
+    Ok(vec![])
+}
+
+#[hdk_extern]
+pub fn get_agents_with_profile(input: ZomeFnInput<()>) -> ExternResult<Vec<Record>> {
+    Ok(vec![])
+}
+
+
 /// Incredible function
 #[hdk_extern]
 pub fn export_piece(input: ExportPieceInput) -> ExternResult<()> {

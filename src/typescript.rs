@@ -154,7 +154,24 @@ pub fn convert_type(ty: &syn::Type, is_return_type: bool) -> TsType {
                     ),
                     _ => "unknown".to_string(),
                 }.into(),
-                _ => identifier.to_string().into(),
+                _ => {
+                    // Hack for Profiles's ZomeFnInput: convert to the generic type
+                    match arguments {
+                        syn::PathArguments::AngleBracketed(anglebracketed_argument) => {
+                            let generic = match convert_generic(anglebracketed_argument.args.first().unwrap(), is_return_type) {
+                                TsType{ is_optional: true, is_result: _, ts_type } => format!("{} | undefined", ts_type),
+                                TsType{ is_optional: false, is_result: _, ts_type } => ts_type
+                            };
+                            generic
+                            // if generic == "void" {
+                            //     "void".to_string()
+                            // } else {
+                            //     format!("{}<{}>", identifier.to_string(), generic)
+                            // }
+                        },
+                        _ => identifier.to_string(),
+                    }.into()
+                },
             }
         }
         syn::Type::Tuple(p) => {

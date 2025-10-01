@@ -15,6 +15,14 @@ export class OutputProxy extends ZomeProxy {
   static override readonly ENTRY_TYPES = Object.values(OutputUnitEnum);
   static override readonly LINK_TYPES = Object.values(OutputLinkType);
  
+  async getAgentProfile(input: AgentArray): Promise<HcRecord | null> {
+    return this.call('get_agent_profile', input);
+  }
+
+  async getAgentsWithProfile(input: void): Promise<HcRecord[]> {
+    return this.call('get_agents_with_profile', input);
+  }
+
   async exportPiece(input: ExportPieceInput): Promise<void> {
     return this.call('export_piece', input);
   }

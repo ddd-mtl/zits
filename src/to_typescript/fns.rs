@@ -45,23 +45,23 @@ impl super::ToTypescript for syn::ItemFn {
       state.zome_fn_names_output.push('\n');
 
       let mut arg_name = "null".to_string();
-      let arg = if let Some(FnArg::Typed(patty)) = self.sig.inputs.first() {
-          //println!("\n\npatty.{} = {:?}", fn_name, patty);
+      let mut arg = "".to_string();
+      if let Some(FnArg::Typed(patty)) = self.sig.inputs.first() {
+          println!("\n\npatty.{} = {:?}", fn_name, patty);
           arg_name = match *patty.clone().pat {
               Pat::Ident(pat_ident) => pat_ident.ident.to_string(),
               Pat::Struct(_) => "input".to_string(),
               _ => "null".to_string()
           };
 
-          //let arg_name = "arg_name";
           let arg_type = convert_type(&patty.ty, false).ts_type;
 
-          if let Pat::Wild(_) = *patty.pat {
+          arg = if let Pat::Wild(_) = *patty.pat {
               "".to_string()
           } else {
               format!("{}: {}", arg_name.to_case(Case::Camel), arg_type)
           }
-      } else { "".to_string() };
+      }
 
       state.zome_proxy_output.push_str(&format!(
          "  async {fn_name}{generics}({arg}): {out_name} {{\n"

@@ -62,3 +62,8 @@ export interface Link {
 export type LinkTag = number[];
 
 export type LinkType = number;
+
+export interface ZomeFnInput<T> {
+  input: T
+  local?: boolean
+}

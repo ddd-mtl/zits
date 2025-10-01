@@ -8,6 +8,8 @@ export const outputFunctionNames: FunctionName[] = [
 	"entry_defs", 
 	"get_zome_info", 
 	"get_dna_info",
+	"get_agent_profile",
+	"get_agents_with_profile",
 	"export_piece",
 	"get_session_from_eh",
 	"create_new_session",

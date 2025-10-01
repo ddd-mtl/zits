@@ -75,3 +75,11 @@ pub struct LinkTag(pub Vec<u8>);
 
 #[hdk_entry_helper]
 pub struct LinkType(pub u8);
+
+
+#[hdk_entry_helper]
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct ZomeFnInput<T> {
+    pub input: T,
+    pub local: Option<bool>,
+}
