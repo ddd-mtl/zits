@@ -10,8 +10,8 @@ import {outputFunctionNames} from './output.fn';
 export class OutputProxy extends ZomeProxy {
   static override readonly DEFAULT_ZOME_NAME = "output";
   static override readonly FN_NAMES = outputFunctionNames;
-  static override readonly ENTRY_TYPES = Object.values(OutputUnitEnum);
-  static override readonly LINK_TYPES = Object.values(OutputLinkType);
+  static override readonly ENTRY_TYPES = [];
+  static override readonly LINK_TYPES = [];
  
   async getAgentProfile(input: AgentArray): Promise<HcRecord | null> {
     return this.call('get_agent_profile', input);
