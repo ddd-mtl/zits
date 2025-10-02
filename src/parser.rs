@@ -218,6 +218,8 @@ impl ParseState {
        let mut import_integrity = "".to_string();
        let mut override_types = "  static override readonly ENTRY_TYPES = [];
   static override readonly LINK_TYPES = [];".to_string();
+
+       println!("zome_integrity_output: {}", self.zome_integrity_output.lines().count());
        if self.zome_integrity_output.lines().count() > 3 {
            import_integrity = format!("import {{{pascal_name}UnitEnum, {pascal_name}LinkType}} from './{zome_name}.integrity';");
            override_types = format!("  static override readonly ENTRY_TYPES = Object.values({pascal_name}UnitEnum);
