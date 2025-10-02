@@ -71,14 +71,3 @@ fn export_playset(ExportPlaysetInput{playset_eh, destination_cell_id}: ExportPla
 fn recv_remote_signal(signal: ExternIO) -> ExternResult<()> {
    Ok(())
 }
-
-
-#[hdk_link_types]
-#[derive(Serialize, Deserialize)]
-pub enum TaggingLinkTypes {
-}
-
-#[hdk_entry_types]
-#[unit_enum(TaggingEntryTypes)]
-pub enum TaggingEntry {
-}

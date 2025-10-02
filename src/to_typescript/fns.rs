@@ -47,7 +47,7 @@ impl super::ToTypescript for syn::ItemFn {
       let mut arg_name = "null".to_string();
       let mut arg = "".to_string();
       if let Some(FnArg::Typed(patty)) = self.sig.inputs.first() {
-          println!("\n\npatty.{} = {:?}", fn_name, patty);
+          //println!("\n\npatty.{} = {:?}", fn_name, patty);
           arg_name = match *patty.clone().pat {
               Pat::Ident(pat_ident) => pat_ident.ident.to_string(),
               Pat::Struct(_) => "input".to_string(),

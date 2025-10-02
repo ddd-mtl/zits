@@ -214,10 +214,15 @@ impl ParseState {
 
       self.zome_proxy_output.push_str(&self.external_imports_str);
 
+       let pascal_name = zome_name.to_case(Case::Pascal);
+       let import_integrity = if self.zome_integrity_output.lines().count() > 3 {
+           format!("import {{{pascal_name}UnitEnum, {pascal_name}LinkType}} from './{zome_name}.integrity';")
+       } else {"".to_string()};
+
       self.zome_proxy_output.push_str(&format!("
 import {{ZomeProxy}} from '@ddd-qc/lit-happ';
 import {{{camel_name}FunctionNames}} from './{zome_name}.fn';
-import {{{pascal_name}UnitEnum, {pascal_name}LinkType}} from './{zome_name}.integrity';
+{import_integrity}
 
 /**
  *
@@ -227,8 +232,7 @@ export class {pascal_name}Proxy extends ZomeProxy {{
   static override readonly FN_NAMES = {camel_name}FunctionNames;
   static override readonly ENTRY_TYPES = Object.values({pascal_name}UnitEnum);
   static override readonly LINK_TYPES = Object.values({pascal_name}LinkType);
- ", pascal_name = zome_name.to_case(Case::Pascal)
- , zome_name = zome_name, default_name = default_zome_name, camel_name = zome_name.to_case(Case::Camel)
+ ", zome_name = zome_name, default_name = default_zome_name, camel_name = zome_name.to_case(Case::Camel)
       ));
    }
 
@@ -270,10 +274,8 @@ export function generate{pascal_name}ZomeFunctionsArray(zomeName: ZomeName): [Zo
 
 /** Tuple array of all zome function names with default zome name \"{default_zome_name}\" */
 export const {zome_name}ZomeFunctions: [ZomeName, FunctionName][] = generate{pascal_name}ZomeFunctionsArray(\"{default_zome_name}\");
-"
-, pascal_name = zome_name.to_case(Case::Pascal)
+", pascal_name = zome_name.to_case(Case::Pascal)
 , zome_name = zome_name.to_case(Case::Camel)
-, default_zome_name = default_zome_name
       ));
    }
 }
