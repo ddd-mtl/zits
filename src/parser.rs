@@ -20,6 +20,9 @@ pub struct ParseState {
    /// item_kind -> item_ident[]
    pub converted_items: BTreeMap<&'static str, Vec<String>>,
    pub external_imports_str: String,
+   ///
+   pub has_entry_types: bool,
+   pub has_link_types: bool,
 }
 
 
@@ -43,6 +46,8 @@ impl ParseState {
          zome_fn_names_output: String::new(),
          converted_items,
          external_imports_str: String::new(),
+         has_entry_types: false,
+         has_link_types: false,
       }
    }
 
@@ -215,21 +220,29 @@ impl ParseState {
       self.zome_proxy_output.push_str(&self.external_imports_str);
 
        let pascal_name = zome_name.to_case(Case::Pascal);
-       let mut import_integrity = "".to_string();
-       let mut override_types = "  static override readonly ENTRY_TYPES = [];
-  static override readonly LINK_TYPES = [];".to_string();
+       let mut import_entry_integrity = "".to_string();
+       let mut import_links_integrity = "".to_string();
+       let mut override_entry_types = "  static override readonly ENTRY_TYPES = [];".to_string();
+       let mut override_link_types = "  static override readonly LINK_TYPES = [];".to_string();
 
        println!("zome_integrity_output: {}", self.zome_integrity_output.lines().count());
-       if self.zome_integrity_output.lines().count() > 3 {
-           import_integrity = format!("import {{{pascal_name}UnitEnum, {pascal_name}LinkType}} from './{zome_name}.integrity';");
-           override_types = format!("  static override readonly ENTRY_TYPES = Object.values({pascal_name}UnitEnum);
-  static override readonly LINK_TYPES = Object.values({pascal_name}LinkType);");
+       if self.has_entry_types {
+           import_entry_integrity = format!("import {{{pascal_name}UnitEnum}} from './{zome_name}.integrity';");
+          override_entry_types = format!("  static override readonly ENTRY_TYPES = Object.values({pascal_name}UnitEnum);");
        }
+
+      println!("[zits][debug] self.has_link_types: {}", self.has_link_types);
+
+      if self.has_link_types {
+         import_links_integrity = format!("import {{{pascal_name}LinkType}} from './{zome_name}.integrity';");
+         override_link_types = format!("  static override readonly LINK_TYPES = Object.values({pascal_name}LinkType);");
+      }
 
       self.zome_proxy_output.push_str(&format!("
 import {{ZomeProxy}} from '@ddd-qc/lit-happ';
 import {{{camel_name}FunctionNames}} from './{zome_name}.fn';
-{import_integrity}
+{import_entry_integrity}
+{import_links_integrity}
 
 /**
  *
@@ -237,7 +250,8 @@ import {{{camel_name}FunctionNames}} from './{zome_name}.fn';
 export class {pascal_name}Proxy extends ZomeProxy {{
   static override readonly DEFAULT_ZOME_NAME = \"{default_name}\";
   static override readonly FN_NAMES = {camel_name}FunctionNames;
-{override_types}
+{override_entry_types}
+{override_link_types}
  ", zome_name = zome_name, default_name = default_zome_name, camel_name = zome_name.to_case(Case::Camel)
       ));
    }

@@ -1,3 +1,7 @@
 /target
 .idea
 **/*.integrity.ts
+
+test/proxy/output.fn.ts
+test/enum/output.proxy.ts
+test/proxy-no-types/output.fn.ts

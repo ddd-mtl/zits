@@ -47,16 +47,20 @@ impl super::ToTypescript for syn::ItemEnum {
             make_unnamed_string_enum(self.clone(), &mut state.zome_integrity_output, &name, false, debug);
             //state_str = &mut state.type_defs_output;
         }
+       if utils::get_attribute("hdk_entry_types", &self.attrs()).is_some() {
+          state.has_entry_types = true;
+       }
 
-        /// has_link_types
-        let has_link_types = utils::get_attribute("hdk_link_types", &self.attrs()).is_some();
+        // has_link_types
+        let  has_link_types = utils::get_attribute("hdk_link_types", &self.attrs()).is_some();
         let mut state_str = if has_link_types {
-            &mut state.zome_integrity_output
+           state.has_link_types = true;
+           &mut state.zome_integrity_output
         } else {
             &mut state.type_defs_output
         };
 
-        //println!("[zits][debug] enum has_link_types: \"{}\" | {}", self.ident.to_string(), has_link_types);
+        println!("[zits][debug] enum has_link_types: \"{}\" | {}", self.ident.to_string(), has_link_types);
 
         state_str.push('\n');
 
