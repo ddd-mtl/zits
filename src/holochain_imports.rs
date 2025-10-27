@@ -75,7 +75,7 @@ DhtOpHashB64, DhtOpHash,
 DnaFile, WasmCode,
 /** entry */
 // @ts-ignore
-EntryDefLocation, EntryDefLocationType, AppEntryDefLocation, GetOptions, GetStrategy
+EntryDefLocation, EntryDefLocationType, AppEntryDefLocation, GetOptions, GetStrategy,
 /** entry-details */
 // @ts-ignore
 EntryDetails, RecordDetails, Details, DetailsType, EntryDhtStatus,
