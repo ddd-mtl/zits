@@ -63,7 +63,7 @@ type ExternalArray = Uint8Array;
 ";
 
 
-/// from @Holochain-open-dev/core-types v0.7.0
+/// from @Holochain-open-dev/core-types v0.600.0-dev.1
 pub const HOD_CORE_TYPES_IMPORTS: &str = "
 // @ts-ignore
 import {
@@ -72,7 +72,10 @@ import {
 DhtOpHashB64, DhtOpHash,
 /** DnaFile */
 // @ts-ignore
-DnaFile, DnaDef,
+DnaFile, WasmCode,
+/** entry */
+// @ts-ignore
+EntryDefLocation, EntryDefLocationType, AppEntryDefLocation, GetOptions, GetStrategy
 /** entry-details */
 // @ts-ignore
 EntryDetails, RecordDetails, Details, DetailsType, EntryDhtStatus,
