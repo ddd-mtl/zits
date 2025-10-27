@@ -72,7 +72,7 @@ import {
 DhtOpHashB64, DhtOpHash,
 /** DnaFile */
 // @ts-ignore
-DnaFile, WasmCode,
+DnaFile,
 /** entry */
 // @ts-ignore
 EntryDefLocation, EntryDefLocationType, AppEntryDefLocation, GetOptions, GetStrategy,
