@@ -58,7 +58,7 @@ pub fn has_blocking_attribute(attributes: &[syn::Attribute], item_name: &str) ->
                 let tokens: Vec<_> = stream.into_iter().collect();
                 let first = tokens[0].to_string();
                 if first.starts_with("zits_blocking") {
-                   // Deprecated case: #[feature(zits_blocking)]
+                   // Deprecated case: #[feature(zits_blocking = "BlogPost")]
                    if tokens.len() == 3
                       && tokens[1].to_string() == "=" {
                       let third = tokens[2].to_string();
