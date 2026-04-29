@@ -30,6 +30,12 @@ fn create_new_session(input: CreateNextSessionInput) -> ExternResult<(EntryHashB
 
 #[hdk_extern]
 #[feature(zits_blocking = "BlogPost")]
+fn create_new_post_old(input: CreateNextSessionInput) -> ExternResult<(EntryHashB64, u32)> {
+   Ok(("", 42))
+}
+
+#[hdk_extern]
+#[feature(zits_blocking_BlogPost)]
 fn create_new_post(input: CreateNextSessionInput) -> ExternResult<(EntryHashB64, u32)> {
    Ok(("", 42))
 }

@@ -47,7 +47,9 @@ pub fn has_unit_enum_attribute(attributes: &[syn::Attribute]) -> Option<String> 
     None
 }
 
-/// Check if fn has #[feature(zits_blocking)] or #[feature(zits_blocking = "BlogPost")]
+/// Check if fn has #[feature(zits_blocking)]
+/// or #[feature(zits_blocking_BlogPost)]
+/// or #[feature(zits_blocking = "BlogPost")] (deprecated)
 pub fn has_blocking_attribute(attributes: &[syn::Attribute], item_name: &str) -> Option<String> {
     if let Some(attr) = get_attribute("feature", attributes) {
         for token in attr.tokens.clone().into_iter() {
@@ -55,17 +57,25 @@ pub fn has_blocking_attribute(attributes: &[syn::Attribute], item_name: &str) ->
                 let stream = group.stream();
                 let tokens: Vec<_> = stream.into_iter().collect();
                 let first = tokens[0].to_string();
-                if tokens.len() == 3
-                && first == "zits_blocking"
-                && tokens[1].to_string() == "=" {
-                    let third = tokens[2].to_string();
-                    let trimmed = &third[1..third.len()-1];
-                    println!("[zits][Info] Blocking fn \"{}()\" with PostCommit \"{}\"", item_name, trimmed);
-                    return Some(trimmed.to_owned());
-                }
-                if first == "zits_blocking" {
-                    println!("[zits][info] Blocking fn \"{}()\"", item_name);
-                    return Some("".to_string());
+                if first.starts_with("zits_blocking") {
+                   // Deprecated case: #[feature(zits_blocking)]
+                   if tokens.len() == 3
+                      && tokens[1].to_string() == "=" {
+                      let third = tokens[2].to_string();
+                      let trimmed = &third[1..third.len()-1];
+                      println!("[zits][Info] Blocking fn \"{}()\" with PostCommit \"{}\"", item_name, trimmed);
+                      return Some(trimmed.to_owned());
+                   }
+                   // New case: #[feature(zits_blocking_BlogPost)]
+                   let parts: Vec<&str> = first.split('_').collect();
+                   if first.len() > "zits_blocking".len() && parts.len() == 3 {
+                      let trimmed = parts[2];
+                      println!("[zits][Info] Blocking fn \"{}()\" with PostCommit \"{}\"", item_name, trimmed);
+                      return Some(trimmed.to_owned());
+                   }
+                   // Default case: #[feature(zits_blocking)]
+                   println!("[zits][info] Blocking fn \"{}()\"", item_name);
+                   return Some("".to_string());
                 }
             }
         }

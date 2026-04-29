@@ -13,6 +13,7 @@ export const outputFunctionNames: FunctionName[] = [
 	"export_piece",
 	"get_session_from_eh",
 	"create_new_session",
+	"create_new_post_old",
 	"create_new_post",
 	"create_next_session",
 	"get_all_playsets",
